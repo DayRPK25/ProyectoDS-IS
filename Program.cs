@@ -1,6 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Driver;
-
 namespace ProyectoDS_IS
 {
     internal static class Program
