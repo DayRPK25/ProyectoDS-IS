@@ -1,4 +1,4 @@
-namespace ProyectoDS_IS
+namespace ProyectoDS_IS.Forms
 {
     internal static class Program
     {
@@ -11,7 +11,7 @@ namespace ProyectoDS_IS
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form2());
+            Application.Run(new LoginF());
         }
     }
 }
