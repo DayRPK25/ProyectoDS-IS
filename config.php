@@ -7,9 +7,6 @@ define('BASE_PATH', '/ProyectoDS-IS');
 // --- API externa de geolocalizacion ---
 define('IP_API_BASE', 'http://ip-api.com/json/');
 
-// --- Configuracion del codigo corto ---
-define('SHORT_CODE_LENGTH', 6);
-
 // --- Entorno ---
 define('APP_ENV', 'development');
 ?>
