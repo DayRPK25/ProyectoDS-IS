@@ -1,5 +1,2 @@
 <?php
-
-$router = new Router();
-
 ?>
