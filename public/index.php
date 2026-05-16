@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php';
+
 $router = new Router();
 
 router->add('GET', '/', function () {
