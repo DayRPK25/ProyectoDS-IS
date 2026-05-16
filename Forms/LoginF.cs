@@ -38,14 +38,14 @@ namespace ProyectoDS_IS.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string pattern = @"^[a-zA-Z0-9._%+-]+@estudiantec\.cr$";
+            string pattern = @"^[a-zA-Z._%+-]+@estudiantec\.cr$";
             if (!Regex.IsMatch(textBox1.Text, pattern, RegexOptions.IgnoreCase))
             {
                 MessageBox.Show("El correo debe tener extensión @estudiantec.cr", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            
-            if(textBox2.Text.Length < 8)
+
+            if (textBox2.Text.Length < 8)
             {
                 MessageBox.Show("La contraseña debe tener al menos 8 caracteres.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -60,7 +60,8 @@ namespace ProyectoDS_IS.Forms
             string message = doc.RootElement.GetProperty("message").GetString();
 
             // Si login falla
-            if (!success){
+            if (!success)
+            {
                 MessageBox.Show(
                     message,
                     "Login incorrecto",
@@ -77,10 +78,22 @@ namespace ProyectoDS_IS.Forms
             ApiFake.Instance.Token = token;
             ApiFake.Instance.CurrentUser = userName;
 
-            IDE ide = new IDE();
-            ide.Show();
+            MPrincipal principal = new MPrincipal();
+            principal.Show();
             this.Hide();
 
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.Hide();
+            Registro registro = new Registro();
+            registro.Show();
         }
     }
 }

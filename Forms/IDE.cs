@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProyectoDS_IS.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -41,13 +42,13 @@ namespace ProyectoDS_IS
                 string[] archivos = Directory.GetFiles(rutaCarpeta);
 
                 foreach (string archivo in archivos)
-                { 
-                    
+                {
+
                     TreeNode nodoArchivo = new TreeNode(Path.GetFileName(archivo));
                     nodoArchivo.Tag = archivo;
 
                     nodoPadre.Nodes.Add(nodoArchivo);
-                    
+
                 }
             }
             catch
@@ -144,7 +145,7 @@ namespace ProyectoDS_IS
             {
                 File.WriteAllText(ruta_archivo, fastColoredTextBox1.Text);
             }
-            
+
         }
 
         private void abrirArchivoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -156,7 +157,7 @@ namespace ProyectoDS_IS
             openFileDialog.InitialDirectory = documents;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if(Path.GetExtension(openFileDialog.FileName) == ".py")
+                if (Path.GetExtension(openFileDialog.FileName) == ".py")
                 {
                     fastColoredTextBox1.Text = File.ReadAllText(openFileDialog.FileName);
                     label1.Text = Path.GetFileName(openFileDialog.FileName);
@@ -220,7 +221,7 @@ namespace ProyectoDS_IS
 
             if (File.Exists(ruta))
             {
-                if(Path.GetExtension(ruta) == ".py")
+                if (Path.GetExtension(ruta) == ".py")
                 {
                     fastColoredTextBox1.Text = File.ReadAllText(ruta);
                     label1.Text = Path.GetFileName(ruta);
@@ -233,6 +234,13 @@ namespace ProyectoDS_IS
 
                 }
             }
+        }
+
+        private void toolStripLabel1_Click_1(object sender, EventArgs e)
+        {
+            MPrincipal principal = new MPrincipal();
+            principal.Show();
+            this.Hide();
         }
     }
 }
