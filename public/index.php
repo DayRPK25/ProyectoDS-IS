@@ -64,14 +64,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // ── 4. Registro de rutas ───────────────────────────────────
 $router = new Router();
 
-// Create connection
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-echo "Connected successfully";
+$dbSession = Database::getInstance()->getConnection();
 
 // IMPORTANTE: el orden importa - las rutas especificas de /api PRIMERO
 // para que no sean atrapadas por el catch-all /{shortCode}
