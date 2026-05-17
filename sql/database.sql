@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
     contrasena      VARCHAR(255)    NOT NULL,
     fechaCreacion   DATETIME        NOT NULL DEFAULT NOW(),
     PRIMARY KEY (idUsuario)
+    CONSTRAINT chk_correo CHECK (correo REGEXP '^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de Profesor

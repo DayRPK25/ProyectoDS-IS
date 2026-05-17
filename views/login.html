@@ -10,14 +10,47 @@
     <h1>Página de inicio de sesión</h1>
     
     <label for="correo">Correo:</label>
-    <input type="text" id="correo" name="correo">
+    <input type="text" id="inputCorreo" name="correo">
     <br>
 
     <label for="Contraseña">Contraseña:</label>
-    <input type="password" id="contrasena" name="contrasena">
+    <input type="password" id="inputContrasena" name="contrasena">
     <br>
 
-    <button type="button" id="iniciarSesion">Iniciar sesión</button>
+    <button type="button" id="buttonIniciarSesion">Iniciar sesión</button>
 
+    <script>
+        const buttonIniciarSesion = document.getElementById('buttonIniciarSesion');
+
+        buttonIniciarSesion.addEventListener('click', async () => {
+            const correo = document.getElementById('inputCorreo').value.trim();
+            const contrasena = document.getElementById('inputContrasena').value.trim();
+
+            if (!correo || !contrasena) {
+                alert('Por favor, complete todos los campos.');
+                return;
+            }
+
+            try {
+                const response = await fetch(BASE_URL + 'api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Respuesta del servidor:', data);
+                alert('Inicio de sesión exitoso.');
+
+            } catch (error) {
+                console.error('Error al iniciar sesión:', error);
+                alert('Ocurrió un error al iniciar sesión. Intente de nuevo.');
+            }
+        });
+    </script>
 </body>
 </html>
