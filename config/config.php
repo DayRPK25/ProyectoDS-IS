@@ -13,7 +13,7 @@ define('DB_CHARSET', 'utf8mb4');
 // --- URL base de la aplicacion (sin trailing slash) ---
 // Cambia BASE_PATH si la app vive en una subcarpeta de Apache
 define('BASE_URL',  'http://localhost/sistema_entregas');
-define('BASE_PATH', '/url-shortener');
+define('BASE_PATH', '/sistema_entregas');
 
 // --- API externa de geolocalizacion ---
 define('IP_API_BASE', 'http://ip-api.com/json/');

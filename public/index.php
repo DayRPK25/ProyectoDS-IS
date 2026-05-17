@@ -28,12 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 spl_autoload_register(function (string $class): void {
     // Mapa de directorios donde buscar clases
     $directorios = [
-        __DIR__ . '/../model/Archivos/',
-        __DIR__ . '/../model/Auth/',
-        __DIR__ . '/../model/Bitacora/',
-        __DIR__ . '/../model/Core/',
-        __DIR__ . '/../model/Editor/',
-        __DIR__ . '/../model/Tareas/'
+        __DIR__ . '/../app/core/',
+        __DIR__ . '/../app/models/',
+        __DIR__ . '/../app/controllers/',
+        __DIR__ . '/../app/services/',
     ];
 
     foreach ($directorios as $dir) {
