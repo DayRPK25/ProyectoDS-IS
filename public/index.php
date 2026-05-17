@@ -68,21 +68,21 @@ $router = new Router();
 // para que no sean atrapadas por el catch-all /{shortCode}
 
 // Servir la SPA (el unico View PHP)
-$router->add('GET', '/', function () {
+$router->add('GET', '/home', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/home.html';
+    exit;
+});
+
+$router->add('GET', '/login', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
     require_once __DIR__ . '/../views/login.html';
     exit;
 });
 
-$router->add('GET', '/api/login', function () {
-    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
-    header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../views/login.html';
-    exit;
-});
-
-$router->add('GET', '/api/register', function () {
+$router->add('GET', '/register', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
     require_once __DIR__ . '/../views/register.html';
