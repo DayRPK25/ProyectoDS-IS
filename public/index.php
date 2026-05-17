@@ -7,6 +7,11 @@
 // 3. Despacha el request al Controller correcto
 // ============================================================
 
+require_once __DIR__ . '/../model/Auth/RolUsuario.php'
+require_once __DIR__ . '/../model/Auth/Usuario.php'
+require_once __DIR__ . '/../model/Auth/UsuarioFactory.php'
+require_once __DIR__ . '/../model/Auth/Estudiante.php'
+require_once __DIR__ . '/../model/Auth/Profesor.php'
 require_once __DIR__ . '/../model/Auth/EstudianteFactory.php'
 require_once __DIR__ . '/../model/Auth/ProfesorFactory.php'
 
