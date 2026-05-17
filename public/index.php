@@ -94,7 +94,10 @@ $router->add('POST', '/api/auth/register', function () {
     exit;
 });
 
-$router->add('GET', '/api/tareas', function () {});
+$router->add('GET', '/api/tareas', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+});
 
 $router->add('POST', '/api/tareas', function () {});
 
@@ -190,6 +193,7 @@ $router->add('GET', '/register', function () {
     exit;
 });
 
+// Dirige a la página de menuEstudiante
 $router->add('GET', '/menuEstudiante', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
