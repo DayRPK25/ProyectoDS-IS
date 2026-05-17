@@ -43,8 +43,7 @@
                 }
 
                 const data = await response.json();
-                alert('Respuesta del servidor.');
-                alert(data.stringify());
+                console.log('Respuesta del servidor:', data);
                 alert('Inicio de sesión exitoso.');
 
             } catch (error) {
