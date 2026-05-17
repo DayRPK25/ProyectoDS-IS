@@ -106,24 +106,29 @@ $router->add('POST', '/api/auth/login', function () {
 });
 
 $router->add('POST', '/api/auth/register', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // 1. Hashear la contraseña antes de insertar
+    $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
+
+    $pdo = Database::getInstance()->getConnection();
+    query($pdo,
+        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+        [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
+    );
+
+    // 2. Recuperar el ID del usuario recién insertado
+    $idUsuario = $pdo->lastInsertId();
+
     $response = [
-        'idUsuario' => 0, // Hay que recuperar esto en la base de datos
+        'idUsuario' => $idUsuario,
         'estado'    => 'registrado'
     ];
-    
-    $data = json_decode(file_get_contents('php://input'), true);
-    $pdo = Database::getInstance()->getConnection();
-    //query($pdo,
-    //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-    //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $data['contrasena']]
-    //);
 
-    http_response_code(200);
+    http_response_code(201); // 201 = Created, más correcto que 200 para inserciones
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
-    
 });
 
 $router->add('GET', '/api/tareas', function () {
