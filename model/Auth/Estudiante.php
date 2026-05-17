@@ -1,7 +1,5 @@
 <?php
 
-namespace model\Auth;
-
 use DateTime;
 use model\Archivos\ArchivoP;
 use model\Editor\Terminal;

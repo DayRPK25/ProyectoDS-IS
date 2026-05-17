@@ -1,7 +1,5 @@
 <?php
 
-namespace model\Auth;
-
 use DateTime;
 
 abstract class Usuario

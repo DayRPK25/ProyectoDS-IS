@@ -1,7 +1,5 @@
 <?php
 
-namespace model\Auth;
-
 use model\Editor\EditorCodigo;
 
 /**

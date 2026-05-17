@@ -1,7 +1,5 @@
 <?php
 
-namespace model\Auth;
-
 use DateTime;
 use model\Tareas\Tarea;
 use model\Tareas\Entrega;

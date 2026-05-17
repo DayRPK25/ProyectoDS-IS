@@ -1,8 +1,5 @@
 <?php
 
-// Alternativa para PHP < 8.1
-namespace model\Auth;
-
 class RolUsuario
 {
     const ESTUDIANTE = 'ESTUDIANTE';
