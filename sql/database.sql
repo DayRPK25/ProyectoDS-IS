@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
 -- Tabla de Profesor
 CREATE TABLE IF NOT EXISTS Profesor (
     codigoProfesor  VARCHAR(20),
-    idUser          INT             NOT NULL UNIQUE,
+    idUsuario       INT             NOT NULL UNIQUE,
     PRIMARY KEY (codigoProfesor),
     CONSTRAINT fk_Profesor_idUser FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Profesor (
 -- Tabla de Estudiante
 CREATE TABLE IF NOT EXISTS Estudiante (
     codigoEstudiante    VARCHAR(20),
-    idUser              INT             NOT NULL UNIQUE,
+    idUsuario           INT             NOT NULL UNIQUE,
     PRIMARY KEY (codigoEstudiante),
     CONSTRAINT fk_Estudiante_idUsuario FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
