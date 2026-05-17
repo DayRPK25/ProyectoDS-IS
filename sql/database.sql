@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
     nombreUsuario   VARCHAR(100)    NOT NULL UNIQUE,
     contrasena      VARCHAR(255)    NOT NULL,
     fechaCreacion   DATETIME        NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (idUser)
+    PRIMARY KEY (idUsuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de Profesor
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS Estudiante (
     codigoEstudiante    VARCHAR(20),
     idUser              INT             NOT NULL UNIQUE,
     PRIMARY KEY (codigoEstudiante),
-    CONSTRAINT fk_Estudiante_idUser FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+    CONSTRAINT fk_Estudiante_idUsuario FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla Tarea
