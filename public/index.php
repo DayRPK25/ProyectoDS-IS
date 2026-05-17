@@ -32,6 +32,7 @@ spl_autoload_register(function (string $class): void {
         __DIR__ . '/../app/models/',
         __DIR__ . '/../app/controllers/',
         __DIR__ . '/../app/services/',
+        __DIR__ . '/../model/Archivos/'
     ];
 
     foreach ($directorios as $dir) {
