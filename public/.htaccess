@@ -6,7 +6,7 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /url-shortener/
+    RewriteBase /sistema_entregas/
 
     # No reescribir archivos existentes (css, js, imagenes)
     RewriteCond %{REQUEST_FILENAME} !-f

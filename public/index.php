@@ -68,7 +68,7 @@ $router = new Router();
 // para que no sean atrapadas por el catch-all /{shortCode}
 
 // Servir la SPA (el unico View PHP)
-$router->add('GET', '/home', function () {
+$router->add('GET', '/', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
     require_once __DIR__ . '/../views/home.html';
