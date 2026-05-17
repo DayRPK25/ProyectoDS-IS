@@ -70,16 +70,29 @@ $router = new Router();
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
     $data = json_decode(file_get_contents('php://input'), true);
-    $correo = data['correo'];
-    $contrasena = data['contrasena'];
-
+    $response = [
+        'idUsuario' => 0,               // Hay que recuperar esto en la base de datos
+        'nombre'    => 'nombre',        // Hay que recuperar esto en la base de datos
+        'rol'       => 'ESTUDIANTE',    // Hay que recuperar esto en la base de datos
+        'token'     => 'abc123'         // Esto se tiene que generar
+    ];
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 });
 
-$router->add('POST', '/api/auth/register', function () {});
+$router->add('POST', '/api/auth/register', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $response = [
+        'idUsuario' => 0, // Hay que recuperar esto en la base de datos
+        'estado'    => 'registrado'
+    ];
+    http_response_code(200);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+});
 
 $router->add('GET', '/api/tareas', function () {});
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 </head>
-    <body>
+<body>
 
     <h1>Página de registro de cuenta</h1>
     
@@ -32,5 +32,43 @@
     <input type="radio" id="radioButtonProfesor" name="rol" value="profesor">
     <label for="profesor">Profesor</label>
 
-    </body>
+    <button type="button" id="buttonRegistrarse">Registrarse</button>
+    
+    <script>
+        const buttonRegistrarse = document.getElementById('buttonRegistrarse');
+
+        buttonRegistrarse.addEventListener('click', async () => {
+            const correo = document.getElementById('inputCorreo').value.trim();
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const nombreUsuario = document.getElementById('inputNombreUsuario').value.trim();
+            const contrasena = document.getElementById('inputContrasena').value.trim();
+            const rol = document.querySelector('input[name="rol"]:checked').value;
+
+            if (!correo || !nombre || !nombreUsuario || !contrasena) {
+                alert('Por favor, complete todos los campos.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://170.9.26.131:80/api/auth/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Respuesta del servidor:', data);
+                alert('Inicio de sesión exitoso.');
+
+            } catch (error) {
+                console.error('Error al registrarse:', error);
+                alert('Ocurrió un error al registrarse. Intente de nuevo.');
+            }
+        });
+    </script>
+</body>
 </html>
