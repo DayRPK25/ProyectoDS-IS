@@ -113,10 +113,10 @@ $router->add('POST', '/api/auth/register', function () {
     
     $data = json_decode(file_get_contents('php://input'), true);
     $pdo = Database::getInstance()->getConnection();
-    query($pdo,
-        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-        [$data['correo'], $data['nombre'], $data['nombreUsuario'], $data['contrasena']]
-    );
+    //query($pdo,
+    //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+    //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $data['contrasena']]
+    //);
 
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
