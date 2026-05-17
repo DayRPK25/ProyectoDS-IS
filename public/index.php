@@ -75,14 +75,14 @@ $router->add('GET', '/', function () {
     exit;
 });
 
-$router->add('GET', '/login', function () {
+$router->add('GET', '/api/login', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
     require_once __DIR__ . '/../views/login.html';
     exit;
 });
 
-$router->add('GET', '/register', function () {
+$router->add('GET', '/api/register', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
     require_once __DIR__ . '/../views/register.html';
