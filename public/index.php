@@ -7,16 +7,13 @@
 // 3. Despacha el request al Controller correcto
 // ============================================================
 
-require_once __DIR__ . '/../model/Auth/RolUsuario.php'
-
-
 // ── 1. Configuracion ──────────────────────────────────────
 require_once __DIR__ . '/../config/config.php';
 
 // Headers globales: JSON por defecto, CORS abierto para desarrollo
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Preflight CORS - el browser pregunta antes de hacer POST cross-origin
