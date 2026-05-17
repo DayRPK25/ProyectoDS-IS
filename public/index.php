@@ -45,12 +45,12 @@ spl_autoload_register(function (string $class): void {
     throw new RuntimeException("Clase no encontrada: {$class}");
 });
 
-try {
-    $pdo = Database::getInstance()->getConnection();
-    echo "Conexión exitosa";
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
+//try {
+//    $pdo = Database::getInstance()->getConnection();
+//    echo "Conexión exitosa";
+//} catch (Exception $e) {
+//    echo "Error: " . $e->getMessage();
+//}
 
 // ── 3. Parseo de la URI ────────────────────────────────────
 // Quitamos el BASE_PATH para que el Router trabaje con rutas relativas
@@ -103,7 +103,8 @@ $router->add('POST', '/api/auth/login', function () {
         'idUsuario' => $queryResult['idUsuario'],               // Hay que recuperar esto en la base de datos
         'nombre'    => $queryResult['nombre'],        // Hay que recuperar esto en la base de datos
         'rol'       => 'ESTUDIANTE',    // Hay que recuperar esto en la base de datos
-        'token'     => 'abc123'         // Esto se tiene que generar
+        'token'     => 'abc123',         // Esto se tiene que generar
+        'success'   => true
     ];
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
@@ -123,11 +124,6 @@ $router->add('POST', '/api/auth/register', function () {
     //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
     //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
     //);
-
-    $queryResult = query($pdo,
-        "SELECT * FROM Usuario",
-        []
-    )->fetch() ?: [];
 
     // 2. Recuperar el ID del usuario recién insertado
     $idUsuario = $pdo->lastInsertId();
