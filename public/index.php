@@ -8,12 +8,7 @@
 // ============================================================
 
 require_once __DIR__ . '/../model/Auth/RolUsuario.php'
-require_once __DIR__ . '/../model/Auth/Usuario.php'
-require_once __DIR__ . '/../model/Auth/UsuarioFactory.php'
-require_once __DIR__ . '/../model/Auth/Estudiante.php'
-require_once __DIR__ . '/../model/Auth/Profesor.php'
-require_once __DIR__ . '/../model/Auth/EstudianteFactory.php'
-require_once __DIR__ . '/../model/Auth/ProfesorFactory.php'
+
 
 // ── 1. Configuracion ──────────────────────────────────────
 require_once __DIR__ . '/../config/config.php';
