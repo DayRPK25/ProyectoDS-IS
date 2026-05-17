@@ -93,14 +93,14 @@ $router->add('POST', '/api/auth/login', function () {
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     }
-    $pdo = Database::getInstance()->getConnection();
-    $queryResult = query($pdo,
-        "SELECT * FROM Usuario WHERE correo = ?",
-        [$data['correo']]
-        )->fetch() ?: [];
+    //$pdo = Database::getInstance()->getConnection();
+    //$queryResult = query($pdo,
+    //    "SELECT * FROM Usuario WHERE correo = ?",
+    //    [$data['correo']]
+    //    )->fetch() ?: [];
     $response = [
-        'idUsuario' => $queryResult['idUsuario'],               // Hay que recuperar esto en la base de datos
-        'nombre'    => $queryResult['nombre'],        // Hay que recuperar esto en la base de datos
+        'idUsuario' => 1,   //$queryResult['idUsuario'],               // Hay que recuperar esto en la base de datos
+        'nombre'    => 'usuario',   //$queryResult['nombre'],        // Hay que recuperar esto en la base de datos
         'rol'       => 'ESTUDIANTE',    // Hay que recuperar esto en la base de datos
         'token'     => 'abc123',         // Esto se tiene que generar
         'success'   => true
