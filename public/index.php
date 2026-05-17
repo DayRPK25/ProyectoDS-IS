@@ -71,7 +71,21 @@ $router = new Router();
 $router->add('GET', '/', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../app/views/home.php';
+    require_once __DIR__ . '/../views/home.html';
+    exit;
+});
+
+$router->add('GET', '/login', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/login.html';
+    exit;
+});
+
+$router->add('GET', '/register', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/register.html';
     exit;
 });
 
