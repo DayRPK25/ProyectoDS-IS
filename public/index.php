@@ -64,7 +64,22 @@ $method = $_SERVER['REQUEST_METHOD'];
 // ── 4. Registro de rutas ───────────────────────────────────
 $router = new Router();
 
-$dbSession = Database::getInstance()->getConnection();
+// Helper: prepara y ejecuta cualquier consulta SQL
+// Devuelve el PDOStatement listo para fetchAll / fetch
+function query(PDO $pdo, string $sql, array $params = []): PDOStatement {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt;
+}
+
+// Helper: busca un registro por su PK (id)
+// function findById(int $id): array {
+//     $stmt = query(
+//         "SELECT * FROM {$this->table} WHERE id = ?",
+//         [$id]
+//     );
+//     return $stmt->fetch() ?: [];
+// }
 
 // IMPORTANTE: el orden importa - las rutas especificas de /api PRIMERO
 // para que no sean atrapadas por el catch-all /{shortCode}
@@ -72,20 +87,31 @@ $dbSession = Database::getInstance()->getConnection();
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
     $data = json_decode(file_get_contents('php://input'), true);
+    $pdo = Database::getInstance()->getConnection();
+    $queryResult = query($pdo,
+        "SELECT * FROM Usuario WHERE correo = ?",
+        [$data['correo']]
+        )->fetch() ?: [];
     $response = [
-        'idUsuario' => 0,               // Hay que recuperar esto en la base de datos
-        'nombre'    => 'nombre',        // Hay que recuperar esto en la base de datos
+        'idUsuario' => $queryResult['idUsuario'],               // Hay que recuperar esto en la base de datos
+        'nombre'    => $queryResult['nombre'],        // Hay que recuperar esto en la base de datos
         'rol'       => 'ESTUDIANTE',    // Hay que recuperar esto en la base de datos
         'token'     => 'abc123'         // Esto se tiene que generar
     ];
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
     exit;
 });
 
 $router->add('POST', '/api/auth/register', function () {
     $data = json_decode(file_get_contents('php://input'), true);
+    $pdo = Database::getInstance()->getConnection();
+    query($pdo,
+        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+        [$data['correo'], $data['nombre'], $data['nombreUsuario'], password_hash($data['contrasena'], PASSWORD_BCRYPT)]
+    );
     $response = [
         'idUsuario' => 0, // Hay que recuperar esto en la base de datos
         'estado'    => 'registrado'
@@ -93,6 +119,7 @@ $router->add('POST', '/api/auth/register', function () {
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
     exit;
 });
 
