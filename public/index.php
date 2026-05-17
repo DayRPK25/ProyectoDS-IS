@@ -112,10 +112,15 @@ $router->add('POST', '/api/auth/register', function () {
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
     $pdo = Database::getInstance()->getConnection();
-    query($pdo,
-        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-        [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
-    );
+    //query($pdo,
+    //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+    //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
+    //);
+
+    $queryResult = query($pdo,
+        "SELECT * FROM Usuario",
+        []
+    )->fetch() ?: [];
 
     // 2. Recuperar el ID del usuario recién insertado
     $idUsuario = $pdo->lastInsertId();
