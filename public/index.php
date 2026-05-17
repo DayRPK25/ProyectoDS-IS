@@ -87,6 +87,12 @@ function query(PDO $pdo, string $sql, array $params = []): PDOStatement {
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
     $data = json_decode(file_get_contents('php://input'), true);
+    try {
+        $pdo = Database::getInstance()->getConnection();
+        echo "Conexión exitosa";
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
     $pdo = Database::getInstance()->getConnection();
     $queryResult = query($pdo,
         "SELECT * FROM Usuario WHERE correo = ?",
@@ -112,17 +118,11 @@ $router->add('POST', '/api/auth/register', function () {
     // 1. Hashear la contraseña antes de insertar
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    //$pdo = Database::getInstance()->getConnection();
-    try {
-        $pdo = Database::getInstance()->getConnection();
-        echo "Conexión exitosa";
-    } catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    //query($pdo,
-    //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-    //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
-    //);
+    $pdo = Database::getInstance()->getConnection();
+    query($pdo,
+        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+        [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
+    );
 
     // 2. Recuperar el ID del usuario recién insertado
     $idUsuario = $pdo->lastInsertId();
