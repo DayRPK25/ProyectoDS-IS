@@ -75,6 +75,7 @@ $router->add('GET', '/', function () {
     exit;
 });
 
+// Dirige a la página de Inicio de Sesión
 $router->add('GET', '/login', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
@@ -82,6 +83,7 @@ $router->add('GET', '/login', function () {
     exit;
 });
 
+// Dirige a la página de Registro de Cuenta
 $router->add('GET', '/register', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
@@ -89,7 +91,79 @@ $router->add('GET', '/register', function () {
     exit;
 });
 
-// API de URLs
+// API para el Backend
+$router->add('POST', '/api/auth/login', function () {});
+
+$router->add('POST', '/api/auth/register', function () {});
+
+$router->add('GET', '/api/tareas', function () {});
+
+$router->add('POST', '/api/tareas', function () {});
+
+$router->add('PUT', '/api/tareas/{idTarea}', function (int $idTarea) {});
+
+$router->add('POST', '/api/tareas/{idTarea}/grupos', function (int $idTarea) {});
+
+$router->add('GET', '/api/tareas/{idTarea}/entregas', function (int $idTarea) {});
+
+$router->add('POST', '/api/archivos', function () {});
+
+$router->add('GET', '/api/archivos/{idArchivo}', function (int $idArchivo) {});
+
+$router->add('PUT', '/api/tareas/{idArchivo}', function (int $idArchivo) {});
+
+$router->add('POST', '/api/archivos/{idArchivo}', function (int $idArchivo) {});
+
+$router->add('POST', '/api/ejecucion', function () {});
+
+$router->add('GET', '/api/entregas/{idEntrega}/firma', function (int $idEntrega) {});
+
+$router->add('GET', '/api/entregas/{idEntrega}', function (int $idEntrega) {});
+
+$router->add('GET', '/api/bitacora', function () {});
+
+$router->add('GET', '/api/bitacora/ultima-version', function () {});
+
+// API para la Base de Datos
+$router->add('GET', '/data/usuarios/{id}', function (int $id) {});
+
+$router->add('POST', '/data/usuarios', function () {});
+
+$router->add('GET', '/data/tareas', function () {});
+
+$router->add('POST', '/data/tareas', function () {});
+
+$router->add('POST', '/data/grupos', function () {});
+
+$router->add('POST', '/data/archivos', function () {});
+
+$router->add('GET', '/data/archivos/{idArchivo}', function (int $idArchivo) {});
+
+$router->add('PUT', '/data/archivos/{idArchivo}', function (int $idArchivo) {});
+
+$router->add('POST', '/data/entregas', function () {});
+
+$router->add('GET', '/data/entregas', function () {});
+
+$router->add('POST', '/data/bitacora', function () {});
+
+$router->add('GET', '/data/bitacora', function () {});
+
+$router->add('GET', '/data/usuarios', function () {});
+
+$router->add('PUT', '/data/tareas/{idTarea}', function (int $idTarea) {});
+
+$router->add('PUT', '/data/archivos/{idArchivo}/firma', function (int $idArchivo) {});
+
+$router->add('GET', '/data/entregas/{idEntrega}/firma', function (int $idEntrega) {});
+
+$router->add('GET', '/data/bitacora/ultima-version', function () {});
+
+// API para Git
+$router->add('POST', '/git/repos', function () {});
+
+$router->add('POST', '/git/commits', function () {});
+
 $router->add('POST', '/api/urls', function () {
     (new UrlController())->create();
 });
