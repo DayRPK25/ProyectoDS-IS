@@ -45,13 +45,6 @@ spl_autoload_register(function (string $class): void {
     throw new RuntimeException("Clase no encontrada: {$class}");
 });
 
-//try {
-//    $pdo = Database::getInstance()->getConnection();
-//    echo "Conexión exitosa";
-//} catch (Exception $e) {
-//    echo "Error: " . $e->getMessage();
-//}
-
 // ── 3. Parseo de la URI ────────────────────────────────────
 // Quitamos el BASE_PATH para que el Router trabaje con rutas relativas
 // Ejemplo: /url-shortener/api/urls → /api/urls
@@ -119,7 +112,13 @@ $router->add('POST', '/api/auth/register', function () {
     // 1. Hashear la contraseña antes de insertar
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    $pdo = Database::getInstance()->getConnection();
+    //$pdo = Database::getInstance()->getConnection();
+    try {
+        $pdo = Database::getInstance()->getConnection();
+        echo "Conexión exitosa";
+    } catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
     //query($pdo,
     //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
     //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
