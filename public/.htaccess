@@ -5,8 +5,8 @@
 # ============================================================
 
 <IfModule mod_rewrite.c>
+    Options -Multiviews
     RewriteEngine On
-    RewriteBase /sistema_entregas/
 
     # No reescribir archivos existentes (css, js, imagenes)
     RewriteCond %{REQUEST_FILENAME} !-f
