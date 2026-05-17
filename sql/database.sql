@@ -1,9 +1,9 @@
 -- Base de datos para acortador de URLs
-CREATE DATABASE IF NOT EXISTS url_shortener
+CREATE DATABASE IF NOT EXISTS sistema_entregas
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE url_shortener;
+USE sistema_entregas;
 
 -- Tabla principal
 -- guarda cada URL acortada

@@ -10,15 +10,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acortador de URLs - LAMP MVC</title>
+    <title>Sistema de entregas</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <header class="site-header">
         <div class="container">
-            <h1 class="site-title">Acortador de URLs</h1>
-            <p class="site-subtitle">Acorta, comparte y monitorea tus enlaces</p>
+            <h1 class="site-title">Sistema de entregas</h1>
+            <p class="site-subtitle">Inicio de sesión</p>
         </div>
     </header>
 
