@@ -113,14 +113,10 @@ $router->add('POST', '/api/auth/register', function () {
     try {
         $data = json_decode(file_get_contents('php://input'), true);
         $pdo = Database::getInstance()->getConnection();
-        query($pdo,
-            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-            [$data['correo'], $data['nombre'], $data['nombreUsuario'], password_hash($data['contrasena'], PASSWORD_BCRYPT)]
-        );
-        $response = [
-            'idUsuario' => 0, // Hay que recuperar esto en la base de datos
-            'estado'    => 'registrado'
-        ];
+        //query($pdo,
+        //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
+        //    [$data['correo'], $data['nombre'], $data['nombreUsuario'], password_hash($data['contrasena'], PASSWORD_BCRYPT)]
+        //);
         http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -132,6 +128,7 @@ $router->add('POST', '/api/auth/register', function () {
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
     }
     
 });
