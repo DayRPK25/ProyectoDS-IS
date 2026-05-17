@@ -7,6 +7,9 @@
 // 3. Despacha el request al Controller correcto
 // ============================================================
 
+require_once __DIR__ . '/../model/Auth/EstudianteFactory.php'
+require_once __DIR__ . '/../model/Auth/ProfesorFactory.php'
+
 // ── 1. Configuracion ──────────────────────────────────────
 require_once __DIR__ . '/../config/config.php';
 
@@ -68,7 +71,13 @@ $router = new Router();
 // para que no sean atrapadas por el catch-all /{shortCode}
 
 // API para el Backend
-$router->add('POST', '/api/auth/login', function () {});
+$router->add('POST', '/api/auth/login', function () {
+    $data = json_decode(file_get_contents('php://input'), true);
+    http_response_code(200);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+});
 
 $router->add('POST', '/api/auth/register', function () {});
 
