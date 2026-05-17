@@ -102,7 +102,7 @@
     <script>
         const BASE_URL = '<?= rtrim(BASE_URL, '/') ?>';
     </script>
-    <script src="<?= BASE_URL ?>/js/app.js"></script>
+    <script src="js/app.js"></script>
 
 </body>
 </html>
