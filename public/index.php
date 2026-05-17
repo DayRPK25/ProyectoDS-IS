@@ -64,6 +64,8 @@ $method = $_SERVER['REQUEST_METHOD'];
 // ── 4. Registro de rutas ───────────────────────────────────
 $router = new Router();
 
+$dbSession = Database::getInstance()->getConnection();
+
 // IMPORTANTE: el orden importa - las rutas especificas de /api PRIMERO
 // para que no sean atrapadas por el catch-all /{shortCode}
 
