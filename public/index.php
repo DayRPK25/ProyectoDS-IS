@@ -7,6 +7,7 @@
 // 3. Despacha el request al Controller correcto
 // ============================================================
 
+require_once __DIR__ . '/../model/Auth/RolUsuario.php'
 
 
 // ── 1. Configuracion ──────────────────────────────────────
