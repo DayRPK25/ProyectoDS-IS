@@ -70,6 +70,9 @@ $router = new Router();
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
     $data = json_decode(file_get_contents('php://input'), true);
+    $correo = data['correo'];
+    $contrasena = data['contrasena'];
+
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
