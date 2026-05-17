@@ -16,5 +16,5 @@ abstract class UsuarioFactory
 //Traducción muy directa, el único punto a destacar:
 //
 //- **`abstract`** en métodos: En C# los métodos abstractos se declaran con `public abstract TipoRetorno Metodo()`.
-//En PHP el orden cambia ligeramente a `abstract public function metodo(): TipoRetorno`, 
+// En PHP el orden cambia ligeramente a `abstract public function metodo(): TipoRetorno`, 
 // pero el comportamiento es idéntico — obliga a todas las clases hijas a implementar estos tres métodos.
