@@ -45,6 +45,13 @@ spl_autoload_register(function (string $class): void {
     throw new RuntimeException("Clase no encontrada: {$class}");
 });
 
+try {
+    $pdo = Database::getInstance()->getConnection();
+    echo "Conexión exitosa";
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+
 // ── 3. Parseo de la URI ────────────────────────────────────
 // Quitamos el BASE_PATH para que el Router trabaje con rutas relativas
 // Ejemplo: /url-shortener/api/urls → /api/urls
