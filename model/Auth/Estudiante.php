@@ -1,13 +1,13 @@
 <?php
 
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
 use DateTime;
-use SistemaEntregas\Archivos\ArchivoP;
-use SistemaEntregas\Editor\Terminal;
-use SistemaEntregas\Tareas\Tarea;
-use SistemaEntregas\Tareas\Entrega;
-use SistemaEntregas\Tareas\ResultadoEjecucion;
+use model\Archivos\ArchivoP;
+use model\Editor\Terminal;
+use model\Tareas\Tarea;
+use model\Tareas\Entrega;
+use model\Tareas\ResultadoEjecucion;
 
 class Estudiante extends Usuario
 {

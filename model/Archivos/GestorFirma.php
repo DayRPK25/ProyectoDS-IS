@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Archivos;
+namespace model\Archivos;
 
 class GestorFirma
 {

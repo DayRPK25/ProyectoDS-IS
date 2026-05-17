@@ -1,11 +1,11 @@
 <?php
 
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
 use DateTime;
-use SistemaEntregas\Tareas\Tarea;
-use SistemaEntregas\Tareas\Entrega;
-use SistemaEntregas\Tareas\GrupoTrabajo;
+use model\Tareas\Tarea;
+use model\Tareas\Entrega;
+use model\Tareas\GrupoTrabajo;
 
 class Profesor extends Usuario
 {

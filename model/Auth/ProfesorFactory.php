@@ -1,8 +1,8 @@
 <?php
 
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
-use SistemaEntregas\Editor\EditorCodigo;
+use model\Editor\EditorCodigo;
 
 /**
  * Concrete Factory que crea instancias de Profesor y sus componentes.

@@ -1,7 +1,7 @@
 <?php
 
 // Alternativa para PHP < 8.1
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
 class RolUsuario
 {

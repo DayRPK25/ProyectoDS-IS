@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
 use DateTime;
 

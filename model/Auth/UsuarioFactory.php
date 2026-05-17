@@ -1,8 +1,8 @@
 <?php
 
-namespace SistemaEntregas\Auth;
+namespace model\Auth;
 
-use SistemaEntregas\Editor\EditorCodigo;
+use model\Editor\EditorCodigo;
 
 /**
  * Abstract Factory para la creación de usuarios y sus componentes asociados.
