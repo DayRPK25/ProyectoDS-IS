@@ -30,6 +30,7 @@ spl_autoload_register(function (string $class): void {
     $directorios = [
         __DIR__ . '/../model/Archivos/',
         __DIR__ . '/../model/Auth/',
+        __DIR__ . '/../model/Bitacora/',
         __DIR__ . '/../model/Core/',
         __DIR__ . '/../model/Editor/',
         __DIR__ . '/../model/Tareas/'
