@@ -67,30 +67,6 @@ $router = new Router();
 // IMPORTANTE: el orden importa - las rutas especificas de /api PRIMERO
 // para que no sean atrapadas por el catch-all /{shortCode}
 
-// Servir la SPA (el unico View PHP)
-$router->add('GET', '/', function () {
-    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
-    header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../views/home.html';
-    exit;
-});
-
-// Dirige a la página de Inicio de Sesión
-$router->add('GET', '/login', function () {
-    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
-    header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../views/login.html';
-    exit;
-});
-
-// Dirige a la página de Registro de Cuenta
-$router->add('GET', '/register', function () {
-    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
-    header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../views/register.html';
-    exit;
-});
-
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {});
 
@@ -166,6 +142,30 @@ $router->add('POST', '/git/commits', function () {});
 
 $router->add('POST', '/api/urls', function () {
     (new UrlController())->create();
+});
+
+// API de rutas base
+$router->add('GET', '/', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/home.html';
+    exit;
+});
+
+// Dirige a la página de Inicio de Sesión
+$router->add('GET', '/login', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/login.html';
+    exit;
+});
+
+// Dirige a la página de Registro de Cuenta
+$router->add('GET', '/register', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/register.html';
+    exit;
 });
 
 $router->add('GET', '/api/urls', function () {

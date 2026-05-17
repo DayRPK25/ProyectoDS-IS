@@ -47,9 +47,9 @@ abstract class Usuario
         $this->fechaCreacion = new DateTime();
     }
 
-    public function iniciarSesion(string $usuario, string $contrasena): bool
+    public function iniciarSesion(string $correo, string $contrasena): bool
     {
-        return $this->correo === $usuario && $this->contrasena === $contrasena;
+        return $this->correo === $correo && $this->contrasena === $contrasena;
     }
 
     public function cerrarSesion(): void
