@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS Entrega (
     comentarioProfesor  TEXT            NULL,
     PRIMARY KEY (idEntrega),
     CONSTRAINT fk_entrega_tarea FOREIGN KEY (idTarea) REFERENCES Tarea(idTarea),
-    CONSTRAINT fk_entrega_archivo FOREIGN KEY (idArchivoP) REFERENCES ArchivoPython(idArchivoP),
+    CONSTRAINT fk_entrega_archivo FOREIGN KEY (idArchivoP) REFERENCES ArchivoP(idArchivoP),
     CONSTRAINT chk_version CHECK (version >= 1),
     CONSTRAINT chk_nota CHECK (nota BETWEEN 0 AND 100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
