@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Bitacora;
+namespace model\Bitacora;
 
 use DateTime;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace SistemaEntregas\Bitacora;
+namespace model\Bitacora;
 
 use DateTime;
-use SistemaEntregas\Auth\Estudiante;
-use SistemaEntregas\Tareas\Tarea;
-use SistemaEntregas\Tareas\Entrega;
+use model\Auth\Estudiante;
+use model\Tareas\Tarea;
+use model\Tareas\Entrega;
 
 class Bitacora
 {

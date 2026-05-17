@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Core;
+namespace model\Core;
 
 /**
  * Interfaz del patrón Prototype. Todo objeto clonable debe implementarla.

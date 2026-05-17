@@ -1,11 +1,11 @@
 <?php
 
-namespace SistemaEntregas\Tareas;
+namespace model\Tareas;
 
 use DateTime;
-use SistemaEntregas\Archivos\ArchivoP;
-use SistemaEntregas\Auth\Estudiante;
-use SistemaEntregas\Core\IPrototipo;
+use model\Archivos\ArchivoP;
+use model\Auth\Estudiante;
+use model\Core\IPrototipo;
 
 class Entrega implements IPrototipo
 {

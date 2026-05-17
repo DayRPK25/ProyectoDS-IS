@@ -1,21 +1,21 @@
 <?php
 
-namespace SistemaEntregas\Core;
+namespace model\Core;
 
 use DateTime;
-use SistemaEntregas\Auth\Estudiante;
-use SistemaEntregas\Auth\EstudianteFactory;
-use SistemaEntregas\Auth\ProfesorFactory;
-use SistemaEntregas\Auth\Usuario;
-use SistemaEntregas\Auth\UsuarioFactory;
-use SistemaEntregas\Archivos\ArchivoP;
-use SistemaEntregas\Bitacora\Bitacora;
-use SistemaEntregas\Bitacora\RegistroEntrega;
-use SistemaEntregas\Editor\Terminal;
-use SistemaEntregas\Tareas\Entrega;
-use SistemaEntregas\Tareas\GrupoTrabajo;
-use SistemaEntregas\Tareas\ResultadoEjecucion;
-use SistemaEntregas\Tareas\Tarea;
+use model\Auth\Estudiante;
+use model\Auth\EstudianteFactory;
+use model\Auth\ProfesorFactory;
+use model\Auth\Usuario;
+use model\Auth\UsuarioFactory;
+use model\Archivos\ArchivoP;
+use model\Bitacora\Bitacora;
+use model\Bitacora\RegistroEntrega;
+use model\Editor\Terminal;
+use model\Tareas\Entrega;
+use model\Tareas\GrupoTrabajo;
+use model\Tareas\ResultadoEjecucion;
+use model\Tareas\Tarea;
 
 /**
  * Fachada del sistema. Implementa el patrón Singleton para garantizar una única instancia.

@@ -1,8 +1,8 @@
 <?php
 
-namespace SistemaEntregas\Editor;
+namespace model\Editor;
 
-use SistemaEntregas\Archivos\ArchivoP;
+use model\Archivos\ArchivoP;
 
 class Terminal
 {

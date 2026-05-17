@@ -1,8 +1,8 @@
 <?php
 
-namespace SistemaEntregas\Tareas;
+namespace model\Tareas;
 
-use SistemaEntregas\Auth\Estudiante;
+use model\Auth\Estudiante;
 
 class GrupoTrabajo
 {

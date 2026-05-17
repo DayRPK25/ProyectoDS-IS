@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Tareas;
+namespace model\Tareas;
 
 use DateTime;
 

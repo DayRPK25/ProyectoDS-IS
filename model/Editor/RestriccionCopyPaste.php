@@ -1,6 +1,6 @@
 <?php
 
-namespace SistemaEntregas\Editor;
+namespace model\Editor;
 
 class RestriccionCopyPaste
 {
