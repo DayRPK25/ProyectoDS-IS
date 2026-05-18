@@ -7,6 +7,8 @@
 // 3. Despacha el request al Controller correcto
 // ============================================================
 
+ob_start();
+
 // ── 1. Configuracion ──────────────────────────────────────
 require_once __DIR__ . '/../config/config.php';
 
