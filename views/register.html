@@ -60,17 +60,17 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    console.error('Error: ', data.error);
-                    alert('Hubo un error: ' + data.error);
+                    console.error('Error:', data.error);
+                    alert('Hubo un error:' + data.error);
                     return;
                 }
 
-                console.log('Detalle del servidor: ', data);
+                console.log('Detalle del servidor:', data);
                 alert('Registro exitoso. Intente de nuevo.');
 
             } catch (error) {
                 console.error('Error al registrarse:', error);
-                alert('Hubo un error: ' + error);
+                alert('Error al registrarse:' + error);
             }
         });
     </script>
