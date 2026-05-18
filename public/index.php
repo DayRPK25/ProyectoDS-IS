@@ -113,48 +113,41 @@ $router->add('POST', '/api/auth/login', function () {
 $router->add('POST', '/api/auth/register', function () {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    if ($data === null || json_last_error() !== JSON_ERROR_NONE) {
+    $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
+    foreach ($campos as $campo) {
+        if (empty($data[$campo])) {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'error' => "campo requerido: {$campo}"]);
+            exit;
+        }
+    }
+    
+    $rol = strtoupper($data['rol']);
+    if (!in_array($rol, ['ESTUDIANTE', 'PROFESOR'], true)) {
         http_response_code(400);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['success' => false, 'error' => 'JSON inválido: ' . json_last_error_msg()]);
+        echo json_encode(['success' => false, 'error' => 'rol invalido, debe ser ESTUDIANTE o PROFESOR']);
         exit;
     }
+    
+    $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    //$campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
-    //foreach ($campos as $campo) {
-    //    if (empty($data[$campo])) {
-    //        http_response_code(400);
-    //        header('Content-Type: application/json; charset=utf-8');
-    //        echo json_encode(['success' => false, 'error' => "campo requerido: {$campo}"]);
-    //        exit;
-    //    }
-    //}
-    //
-    //$rol = strtoupper($data['rol']);
-    //if (!in_array($rol, ['ESTUDIANTE', 'PROFESOR'], true)) {
-    //    http_response_code(400);
-    //    header('Content-Type: application/json; charset=utf-8');
-    //    echo json_encode(['success' => false, 'error' => 'rol invalido, debe ser ESTUDIANTE o PROFESOR']);
-    //    exit;
-    //}
-    //
-    //$hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
-    //
-    //$dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
-    //$pdo = new PDO($dsn, "admin", "password");
-    //
-    //// insertar usuario base
-    //$stmt = $pdo->prepare(
-    //    "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
-    //    VALUES (?, ?, ?, ?, ?)"
-    //);
-    //$stmt->execute([
-    //    $data['correo'],
-    //    $data['nombre'],
-    //    $data['nombreUsuario'],
-    //    $hash,
-    //    $rol
-    //]);
+    $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
+    $pdo = new PDO($dsn, "admin", "password");
+
+    // insertar usuario base
+    $stmt = $pdo->prepare(
+        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
+        VALUES (?, ?, ?, ?, ?)"
+    );
+    $stmt->execute([
+        $data['correo'],
+        $data['nombre'],
+        $data['nombreUsuario'],
+        $hash,
+        $rol
+    ]);
     //
     //try {
     //    $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
