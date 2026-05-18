@@ -88,7 +88,7 @@ $router->add('POST', '/api/auth/login', function () {
 
     // busca el usuario por correo
     $stmt = $pdo->prepare("SELECT * FROM Usuario WHERE correo = ?");
-    $stmt->execute([$data['correo']]);
+    $stmt->execute([(string) $data['correo']]);
     $usuario = $stmt->fetch();
 
     if (!$usuario || !password_verify($data['contrasena'], $usuario['contrasena'])) {
@@ -134,57 +134,48 @@ $router->add('POST', '/api/auth/register', function () {
 
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
-    $pdo = new PDO($dsn, "admin", "password");
+    try {
+        $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
+        $pdo = new PDO($dsn, "admin", "password");
+        
+        // insertar usuario base
+        $stmt = $pdo->prepare(
+            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
+             VALUES (?, ?, ?, ?, ?)"
+        );
+        $stmt->execute([
+            (string) $data['correo'],
+            (string) $data['nombre'],
+            (string) $data['nombreUsuario'],
+            (string) $hash,
+            (string) $rol
+        ]);
+        $idUsuario = (int) $pdo->lastInsertId();
 
-    $stmt = $pdo->prepare('INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
-    $stmt->execute([
-        (string) $data['correo'],
-        (string) $data['nombre'],
-        (string) $data['nombreUsuario'],
-        (string) $hash,
-        (string) $rol
-    ]);
+        // insertar en tabla de rol correspondiente
+        if ($rol === 'PROFESOR') {
+            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
+            $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
+            $stmt2->execute([$codigo, $idUsuario]);
+        } else {
+            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
+            $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
+            $stmt2->execute([$codigo, $idUsuario]);
+        }
 
-    //try {
-    //    // insertar usuario base
-    //    $stmt = $pdo->prepare(
-    //        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
-    //         VALUES (?, ?, ?, ?, ?)"
-    //    );
-    //    $stmt->execute([
-    //        $data['correo'],
-    //        $data['nombre'],
-    //        $data['nombreUsuario'],
-    //        $hash,
-    //        $rol
-    //    ]);
-    //    $idUsuario = (int) $pdo->lastInsertId();
-//
-    //    // insertar en tabla de rol correspondiente
-    //    if ($rol === 'PROFESOR') {
-    //        $codigo = $data['carnet'] ?? 'P' . $idUsuario;
-    //        $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
-    //        $stmt2->execute([$codigo, $idUsuario]);
-    //    } else {
-    //        $codigo = $data['carnet'] ?? 'E' . $idUsuario;
-    //        $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
-    //        $stmt2->execute([$codigo, $idUsuario]);
-    //    }
-//
-    //} catch (Exception $e) {
-    //    // correo o nombreUsuario duplicado
-    //    if ($e->getCode() === '23000') {
-    //        http_response_code(409);
-    //        header('Content-Type: application/json; charset=utf-8');
-    //        echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
-    //        exit;
-    //    }
-    //    http_response_code(500);
-    //    header('Content-Type: application/json; charset=utf-8');
-    //    echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
-    //    exit;
-    //}
+    } catch (Exception $e) {
+        // correo o nombreUsuario duplicado
+        if ($e->getCode() === '23000') {
+            http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
+            exit;
+        }
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
+        exit;
+    }
 
     http_response_code(201);
     header('Content-Type: application/json; charset=utf-8');
