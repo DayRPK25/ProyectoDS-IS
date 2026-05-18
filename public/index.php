@@ -156,11 +156,11 @@ $router->add('POST', '/api/auth/register', function () {
         if ($rol === 'PROFESOR') {
             $codigo = $data['carnet'] ?? 'P' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([$codigo, $idUsuario]);
+            $stmt2->execute([(string) $codigo, (string) $idUsuario]);
         } else {
             $codigo = $data['carnet'] ?? 'E' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([$codigo, $idUsuario]);
+            $stmt2->execute([(string) $codigo, (string) $idUsuario]);
         }
 
     } catch (Exception $e) {
