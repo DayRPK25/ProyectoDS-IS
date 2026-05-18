@@ -166,11 +166,11 @@ $router->add('POST', '/api/auth/register', function () {
 
         // insertar en tabla de rol correspondiente
         if ($rol === 'PROFESOR') {
-            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
+            $codigo = 'P' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
             $stmt2->execute([$codigo, $idUsuario]);
         } else {
-            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
+            $codigo = 'E' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
             $stmt2->execute([$codigo, $idUsuario]);
         }
