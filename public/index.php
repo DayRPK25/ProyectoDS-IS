@@ -74,7 +74,6 @@ $router = new Router();
 
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
-    header('Content-Type: application/json; charset=utf-8');
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (empty($data['correo']) || empty($data['contrasena'])) {
@@ -114,6 +113,13 @@ $router->add('POST', '/api/auth/login', function () {
 $router->add('POST', '/api/auth/register', function () {
     $data = json_decode(file_get_contents('php://input'), true);
 
+    if ($data === null || json_last_error() !== JSON_ERROR_NONE) {
+        http_response_code(400);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'error' => 'JSON inválido: ' . json_last_error_msg()]);
+        exit;
+    }
+
     $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
     foreach ($campos as $campo) {
         if (empty($data[$campo])) {
@@ -143,9 +149,9 @@ $router->add('POST', '/api/auth/register', function () {
         VALUES (?, ?, ?, ?, ?)"
     );
     $stmt->execute([
-        $data["correo"],
-        $data["nombre"],
-        $data["nombreUsuario"],
+        $data['correo'],
+        $data['nombre'],
+        $data['nombreUsuario'],
         $hash,
         $rol
     ]);
