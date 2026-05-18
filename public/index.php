@@ -138,7 +138,14 @@ $router->add('POST', '/api/auth/register', function () {
     $pdo = new PDO($dsn, "admin", "password");
 
     $stmt = $pdo->prepare('INSERT INTO usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
-    
+    $stmt->execute([
+        $data['correo'],
+        $data['nombre'],
+        $data['nombreUsuario'],
+        $hash,
+        $rol
+    ]);
+
     //try {
     //    // insertar usuario base
     //    $stmt = $pdo->prepare(
