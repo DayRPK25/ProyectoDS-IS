@@ -152,18 +152,18 @@ $router->add('POST', '/api/auth/register', function () {
 
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    try {
-        $stmt = $mysqli->prepare("INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $data['correo'], $data['nombre'], $data['nombreUsuario'], $hash, $rol);
-        $stmt->execute();
-    }
-    catch (Exception $e) {
-        http_response_code(500);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
-        exit;
-    }
+    //$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    //try {
+    //    $stmt = $mysqli->prepare("INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)");
+    //    $stmt->bind_param("sssss", $data['correo'], $data['nombre'], $data['nombreUsuario'], $hash, $rol);
+    //    $stmt->execute();
+    //}
+    //catch (Exception $e) {
+    //    http_response_code(500);
+    //    header('Content-Type: application/json; charset=utf-8');
+    //    echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
+    //    exit;
+    //}
     //$pdo  = Database::getInstance()->getConnection();
 //
     //try {
