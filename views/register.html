@@ -49,20 +49,23 @@
             const rol = document.querySelector('input[name="rol"]:checked').value;
 
             console.log("Datos a enviar:", { correo, nombre, nombreUsuario, rol });
-            
+
             try {
                 const response = await fetch('http://170.9.26.131:80/api/auth/register', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ "correo": correo, "nombre": nombre, "nombreUsuario": nombreUsuario, "contrasena": contrasena, "rol": rol })
+                    body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
                 });
 
+                const data = await response.json();
+
                 if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    console.error('Error: ', data.error);
+                    alert('Hubo un error: ', data.error);
+                    return;
                 }
 
-                const errorData = await response.json();
-                console.log('Detalle del servidor:', errorData);
+                console.log('Detalle del servidor: ', errorData);
                 alert('Registro exitoso. Intente de nuevo.');
 
             } catch (error) {
