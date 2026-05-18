@@ -52,7 +52,7 @@
                 const response = await fetch('http://170.9.26.131:80/api/auth/register', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
+                    body: JSON.stringify({ "correo": correo, "nombre": nombre, "nombreUsuario": nombreUsuario, "contrasena": contrasena, "rol": rol })
                 });
 
                 if (!response.ok) {
