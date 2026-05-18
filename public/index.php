@@ -91,6 +91,7 @@ function query(PDO $pdo, string $sql, array $params = []): PDOStatement {
 
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
+    header('Content-Type: application/json; charset=utf-8');
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (empty($data['correo']) || empty($data['contrasena'])) {
@@ -122,12 +123,12 @@ $router->add('POST', '/api/auth/login', function () {
     ];
 
     http_response_code(200);
-    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 });
 
 $router->add('POST', '/api/auth/register', function () {
+    header('Content-Type: application/json; charset=utf-8');
     $data = json_decode(file_get_contents('php://input'), true);
 
     $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
@@ -166,11 +167,11 @@ $router->add('POST', '/api/auth/register', function () {
 
         // insertar en tabla de rol correspondiente
         if ($rol === 'PROFESOR') {
-            $codigo = 'P' . $idUsuario;
+            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
             $stmt2->execute([$codigo, $idUsuario]);
         } else {
-            $codigo = 'E' . $idUsuario;
+            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
             $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
             $stmt2->execute([$codigo, $idUsuario]);
         }
@@ -188,7 +189,6 @@ $router->add('POST', '/api/auth/register', function () {
     }
 
     http_response_code(201);
-    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success'   => true,
         'idUsuario' => $idUsuario,
