@@ -61,11 +61,11 @@
 
                 if (!response.ok) {
                     console.error('Error: ', data.error);
-                    alert('Hubo un error: ', data.error);
+                    alert('Hubo un error: ' + data.error);
                     return;
                 }
 
-                console.log('Detalle del servidor: ', errorData);
+                console.log('Detalle del servidor: ', data);
                 alert('Registro exitoso. Intente de nuevo.');
 
             } catch (error) {
