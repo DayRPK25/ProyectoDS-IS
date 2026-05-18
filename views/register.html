@@ -48,6 +48,8 @@
             const contrasena = document.getElementById('inputContrasena').value.trim();
             const rol = document.querySelector('input[name="rol"]:checked').value;
 
+            console.log("Datos a enviar:", { correo, nombre, nombreUsuario, rol });
+            
             try {
                 const response = await fetch('http://170.9.26.131:80/api/auth/register', {
                     method: 'POST',
