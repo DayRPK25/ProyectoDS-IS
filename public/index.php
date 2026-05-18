@@ -142,13 +142,13 @@ $router->add('POST', '/api/auth/register', function () {
         "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
         VALUES (?, ?, ?, ?, ?)"
     );
-    //$stmt->execute([
-    //    $data['correo'],
-    //    $data['nombre'],
-    //    $data['nombreUsuario'],
-    //    $hash,
-    //    $rol
-    //]);
+    $stmt->execute([
+        $data["correo"],
+        $data["nombre"],
+        $data["nombreUsuario"],
+        $hash,
+        $rol
+    ]);
 
     //try {
     //    $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
