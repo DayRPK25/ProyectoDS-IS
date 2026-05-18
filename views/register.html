@@ -64,12 +64,12 @@
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
-                const errorData = await response.json().catch(() => null);
-                console.log('Detalle del servidor:', errorData);
+                const errorData = await response.json();
+                console.error('Detalle del servidor:', errorData);
                 alert('Registro exitoso. Intente de nuevo.');
 
             } catch (error) {
-                console.log('Error al registrarse:', error);
+                console.error('Error al registrarse:', error);
                 alert('Ocurrió un error al registrarse. Intente de nuevo.');
             }
         });
