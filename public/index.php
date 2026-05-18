@@ -143,11 +143,11 @@ $router->add('POST', '/api/auth/register', function () {
         VALUES (?, ?, ?, ?, ?)"
     );
     $stmt->execute([
-        (string) $data['correo'],
-        (string) $data['nombre'],
-        (string) $data['nombreUsuario'],
-        (string) $hash,
-        (string) $rol
+        $data['correo'],
+        $data['nombre'],
+        $data['nombreUsuario'],
+        $hash,
+        $rol
     ]);
 
     //try {
@@ -195,11 +195,12 @@ $router->add('POST', '/api/auth/register', function () {
 
     http_response_code(201);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'success'   => true,
-        'idUsuario' => 0,
-        'estado'    => 'registrado',
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode($data);
+    //echo json_encode([
+    //    'success'   => true,
+    //    'idUsuario' => 0,
+    //    'estado'    => 'registrado',
+    //], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 });
 
