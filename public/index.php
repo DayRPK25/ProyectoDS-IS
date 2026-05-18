@@ -151,7 +151,9 @@ $router->add('POST', '/api/auth/register', function () {
     }
 
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
+
     $pdo  = Database::getInstance()->getConnection();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
         // insertar usuario base
