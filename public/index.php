@@ -128,13 +128,13 @@ $router->add('POST', '/api/auth/login', function () {
 });
 
 $router->add('POST', '/api/auth/register', function () {
-    header('Content-Type: application/json; charset=utf-8');
     $data = json_decode(file_get_contents('php://input'), true);
 
     $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
     foreach ($campos as $campo) {
         if (empty($data[$campo])) {
             http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => false, 'error' => "campo requerido: {$campo}"]);
             exit;
         }
@@ -143,6 +143,7 @@ $router->add('POST', '/api/auth/register', function () {
     $rol = strtoupper($data['rol']);
     if (!in_array($rol, ['ESTUDIANTE', 'PROFESOR'], true)) {
         http_response_code(400);
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'error' => 'rol invalido, debe ser ESTUDIANTE o PROFESOR']);
         exit;
     }
@@ -180,15 +181,18 @@ $router->add('POST', '/api/auth/register', function () {
         // correo o nombreUsuario duplicado
         if ($e->getCode() === '23000') {
             http_response_code(409);
+            header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
             exit;
         }
         http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
         exit;
     }
 
     http_response_code(201);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success'   => true,
         'idUsuario' => $idUsuario,
