@@ -137,13 +137,13 @@ $router->add('POST', '/api/auth/register', function () {
     $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
     $pdo = new PDO($dsn, "admin", "password");
 
-    $stmt = $pdo->prepare('INSERT INTO usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
     $stmt->execute([
-        $data['correo'],
-        $data['nombre'],
-        $data['nombreUsuario'],
-        $hash,
-        $rol
+        'javi0409@estudiantec.cr',
+        'Javier',
+        'javi0409',
+        'fsdjkfhdsjkfhkjs',
+        'ESTUDIANTE'
     ]);
 
     //try {
