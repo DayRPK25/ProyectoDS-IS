@@ -139,11 +139,11 @@ $router->add('POST', '/api/auth/register', function () {
 
     $stmt = $pdo->prepare('INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
     $stmt->execute([
-        'javi0409@estudiantec.cr',
-        'Javier',
-        'javi0409',
-        'fsdjkfhdsjkfhkjs',
-        'ESTUDIANTE'
+        (string) $data['correo'],
+        (string) $data['nombre'],
+        (string) $data['nombreUsuario'],
+        (string) $hash,
+        (string) $rol
     ]);
 
     //try {
