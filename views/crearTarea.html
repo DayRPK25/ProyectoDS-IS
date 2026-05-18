@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear tarea</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background-color: #4B3B8C;
+            display: flex;
+            font-family: sans-serif;
+        }
+
+        .sidebar {
+            width: 200px;
+            min-height: 100vh;
+            background-color: #EADDFF;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 14px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-perfil {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #BFB7CC;
+            margin-bottom: 4px;
+        }
+
+        .icono-usuario {
+            width: 48px; height: 48px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .icono-usuario svg { width: 28px; height: 28px; fill: #6750A4; }
+        .sidebar-perfil span { font-size: 0.85rem; color: #1C1B1F; }
+
+        .nav-btn {
+            background-color: #6B5B95; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 10px 12px; font-size: 0.85rem;
+            text-align: left; cursor: pointer; width: 100%;
+        }
+
+        .nav-btn:hover { background-color: #4F378A; }
+        .nav-btn.activo { background-color: #4F378A; }
+        .sidebar-espaciador { flex: 1; }
+
+        .btn-cerrar-sesion {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 10px 12px; font-size: 0.85rem;
+            text-align: left; cursor: pointer; width: 100%;
+        }
+
+        .btn-cerrar-sesion:hover { background-color: #cc1f22; }
+
+        .contenido {
+            flex: 1;
+            padding: 28px 24px;
+            overflow-y: auto;
+        }
+
+        .contenido h2 {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .card-form {
+            background-color: #EADDFF;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 640px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #6750A4;
+            padding: 12px 20px;
+        }
+
+        .card-header h3 { color: #fff; font-size: 0.95rem; font-weight: 600; }
+
+        .card-cuerpo {
+            padding: 20px 20px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .campo label {
+            display: block;
+            font-size: 0.85rem;
+            color: #1C1B1F;
+            margin-bottom: 4px;
+        }
+
+        .campo input[type="text"],
+        .campo input[type="date"],
+        .campo textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: none; border-radius: 8px;
+            background-color: #fff;
+            font-size: 0.9rem; color: #1C1B1F;
+            outline: none; font-family: inherit;
+        }
+
+        .campo input:focus, .campo textarea:focus { box-shadow: 0 0 0 2px #6750A4; }
+        .campo textarea { resize: vertical; min-height: 80px; }
+
+        .campo-check {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.88rem; color: #1C1B1F;
+        }
+
+        .campo-check input[type="checkbox"] {
+            accent-color: #6750A4; width: 16px; height: 16px;
+        }
+
+        /* seccion de grupos */
+        .seccion-grupos {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .seccion-grupos > label {
+            font-size: 0.85rem;
+            color: #575757;
+            font-weight: 600;
+        }
+
+        /* cada bloque de grupo */
+        .bloque-grupo {
+            background-color: #BFB7CC;
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bloque-grupo-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bloque-grupo-header input[type="text"] {
+            flex: 1;
+            padding: 6px 10px;
+            border: none; border-radius: 6px;
+            background-color: #fff;
+            font-size: 0.88rem; color: #1C1B1F;
+            outline: none;
+        }
+
+        .bloque-grupo-header input:focus { box-shadow: 0 0 0 2px #6750A4; }
+
+        .btn-quitar-grupo {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 6px;
+            padding: 5px 10px; font-size: 0.75rem;
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        /* lista de estudiantes dentro del grupo */
+        .lista-miembros {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .fila-miembro {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fila-miembro input[type="text"] {
+            flex: 1;
+            padding: 5px 8px;
+            border: none; border-radius: 6px;
+            background-color: #fff;
+            font-size: 0.82rem; color: #1C1B1F;
+            outline: none;
+        }
+
+        .fila-miembro input:focus { box-shadow: 0 0 0 2px #6750A4; }
+
+        .btn-quitar-miembro {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 4px;
+            padding: 3px 8px; font-size: 0.72rem;
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        .btn-agregar-miembro {
+            background-color: #6B5B95; color: #fff;
+            border: none; border-radius: 6px;
+            padding: 5px 12px; font-size: 0.78rem;
+            cursor: pointer; align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .btn-agregar-miembro:hover { background-color: #4F378A; }
+
+        .btn-agregar-grupo {
+            background-color: #6B5B95; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 7px 14px; font-size: 0.82rem;
+            cursor: pointer; align-self: flex-start;
+        }
+
+        .btn-agregar-grupo:hover { background-color: #4F378A; }
+
+        .card-pie {
+            padding: 10px 20px 18px;
+            display: flex; justify-content: flex-end; gap: 10px;
+        }
+
+        .btn-cancelar {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 20px;
+            padding: 9px 24px; font-size: 0.88rem; cursor: pointer;
+        }
+
+        .btn-cancelar:hover { background-color: #cc1f22; }
+
+        .btn-crear {
+            background-color: #34C759; color: #fff;
+            border: none; border-radius: 20px;
+            padding: 9px 24px; font-size: 0.88rem; cursor: pointer;
+        }
+
+        .btn-crear:hover { background-color: #28a745; }
+
+        .mensaje-error {
+            display: none;
+            color: #FF383C;
+            font-size: 0.78rem;
+            padding: 0 20px 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-perfil">
+            <div class="icono-usuario">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+            </div>
+            <span id="nombreUsuario">Usuario</span>
+        </div>
+
+        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
+        <button class="nav-btn activo">Crear tarea</button>
+
+        <div class="sidebar-espaciador"></div>
+        <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar sesion</button>
+    </aside>
+
+    <main class="contenido">
+        <h2>Crear tarea</h2>
+
+        <div class="card-form">
+            <div class="card-header"><h3>Nueva tarea</h3></div>
+
+            <div class="card-cuerpo">
+                <div class="campo">
+                    <label for="inputNombre">Nombre de la tarea</label>
+                    <input type="text" id="inputNombre" placeholder="Ej: Numero par o impar">
+                </div>
+
+                <div class="campo">
+                    <label for="inputDescripcion">Instrucciones</label>
+                    <textarea id="inputDescripcion" placeholder="Describa lo que debe hacer el estudiante..."></textarea>
+                </div>
+
+                <div class="campo">
+                    <label for="inputFechaEntrega">Fecha de entrega</label>
+                    <input type="date" id="inputFechaEntrega">
+                </div>
+
+                <div class="campo-check">
+                    <input type="checkbox" id="checkGrupal">
+                    <label for="checkGrupal">Tarea grupal</label>
+                </div>
+
+                <!-- grupos: visibles solo si es grupal -->
+                <div class="seccion-grupos" id="seccionGrupos">
+                    <label>Grupos de trabajo</label>
+                    <div id="listaGrupos"></div>
+                    <button class="btn-agregar-grupo" id="btnAgregarGrupo">+ Agregar grupo</button>
+                </div>
+            </div>
+
+            <p class="mensaje-error" id="mensajeError"></p>
+
+            <div class="card-pie">
+                <button class="btn-cancelar" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cancelar</button>
+                <button class="btn-crear" id="btnCrear">Crear</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const BASE = 'http://170.9.26.131:80';
+
+        const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
+        if (!usuario.idUsuario) window.location.href = BASE + '/login';
+        if (usuario.nombre) document.getElementById('nombreUsuario').textContent = usuario.nombre;
+
+        const checkGrupal   = document.getElementById('checkGrupal');
+        const seccionGrupos = document.getElementById('seccionGrupos');
+        const listaGrupos   = document.getElementById('listaGrupos');
+        let contadorGrupos  = 0;
+
+        checkGrupal.addEventListener('change', () => {
+            seccionGrupos.style.display = checkGrupal.checked ? 'flex' : 'none';
+        });
+
+        function crearFilaMiembro() {
+            const fila = document.createElement('div');
+            fila.className = 'fila-miembro';
+
+            const input = document.createElement('input');
+            input.type        = 'text';
+            input.placeholder = 'Carnet del estudiante (ej: 2022163260)';
+
+            const btnQuitar = document.createElement('button');
+            btnQuitar.className   = 'btn-quitar-miembro';
+            btnQuitar.textContent = 'Quitar';
+            btnQuitar.onclick = () => fila.remove();
+
+            fila.appendChild(input);
+            fila.appendChild(btnQuitar);
+            return fila;
+        }
+
+        function crearBloqueGrupo() {
+            contadorGrupos++;
+            const num = contadorGrupos;
+
+            const bloque = document.createElement('div');
+            bloque.className  = 'bloque-grupo';
+            bloque.dataset.id = num;
+
+            // cabecera: nombre del grupo + boton quitar grupo
+            const header = document.createElement('div');
+            header.className = 'bloque-grupo-header';
+
+            const inputNombre = document.createElement('input');
+            inputNombre.type        = 'text';
+            inputNombre.placeholder = 'Nombre del grupo ' + num;
+            inputNombre.className   = 'nombre-grupo';
+
+            const btnQuitar = document.createElement('button');
+            btnQuitar.className   = 'btn-quitar-grupo';
+            btnQuitar.textContent = 'Quitar grupo';
+            btnQuitar.onclick = () => bloque.remove();
+
+            header.appendChild(inputNombre);
+            header.appendChild(btnQuitar);
+
+            // lista de miembros
+            const listaMiembros = document.createElement('div');
+            listaMiembros.className = 'lista-miembros';
+            listaMiembros.appendChild(crearFilaMiembro());
+
+            // boton agregar miembro
+            const btnAgregar = document.createElement('button');
+            btnAgregar.className   = 'btn-agregar-miembro';
+            btnAgregar.textContent = '+ Agregar estudiante';
+            btnAgregar.onclick = () => listaMiembros.appendChild(crearFilaMiembro());
+
+            bloque.appendChild(header);
+            bloque.appendChild(listaMiembros);
+            bloque.appendChild(btnAgregar);
+            return bloque;
+        }
+
+        document.getElementById('btnAgregarGrupo').addEventListener('click', () => {
+            listaGrupos.appendChild(crearBloqueGrupo());
+        });
+
+        document.getElementById('btnCrear').addEventListener('click', async () => {
+            const nombre       = document.getElementById('inputNombre').value.trim();
+            const descripcion  = document.getElementById('inputDescripcion').value.trim();
+            const fechaEntrega = document.getElementById('inputFechaEntrega').value;
+            const esGrupal     = checkGrupal.checked;
+            const mensajeError = document.getElementById('mensajeError');
+
+            mensajeError.style.display = 'none';
+
+            if (!nombre || !fechaEntrega) {
+                mensajeError.textContent   = 'El nombre y la fecha de entrega son obligatorios.';
+                mensajeError.style.display = 'block';
+                return;
+            }
+
+            const grupos = [];
+            if (esGrupal) {
+                listaGrupos.querySelectorAll('.bloque-grupo').forEach(bloque => {
+                    const nombreGrupo = bloque.querySelector('.nombre-grupo').value.trim();
+                    if (!nombreGrupo) return;
+
+                    const miembros = [];
+                    bloque.querySelectorAll('.lista-miembros .fila-miembro input').forEach(inp => {
+                        const carnet = inp.value.trim();
+                        if (carnet) miembros.push(carnet);
+                    });
+
+                    grupos.push({ nombre: nombreGrupo, miembros });
+                });
+
+                if (grupos.length === 0) {
+                    mensajeError.textContent   = 'Agregue al menos un grupo con nombre para tarea grupal.';
+                    mensajeError.style.display = 'block';
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch(BASE + '/api/tareas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, descripcion, fechaEntrega, esGrupal, grupos })
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (!response.ok) {
+                    mensajeError.textContent   = (data && data.error) ? data.error : 'Error al crear la tarea.';
+                    mensajeError.style.display = 'block';
+                    return;
+                }
+
+                window.location.href = BASE + '/menuProfesor';
+
+            } catch (error) {
+                mensajeError.textContent   = 'Error de conexion. Intente de nuevo.';
+                mensajeError.style.display = 'block';
+            }
+        });
+
+        document.getElementById('btnCerrarSesion').addEventListener('click', () => {
+            sessionStorage.removeItem('usuario');
+            window.location.href = BASE + '/login';
+        });
+    </script>
+</body>
+</html>

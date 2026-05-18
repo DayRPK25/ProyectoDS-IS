@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de grupos</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background-color: #4B3B8C;
+            display: flex;
+            font-family: sans-serif;
+        }
+
+        .sidebar {
+            width: 200px;
+            min-height: 100vh;
+            background-color: #EADDFF;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 14px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-perfil {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #BFB7CC;
+            margin-bottom: 4px;
+        }
+
+        .icono-usuario {
+            width: 48px; height: 48px;
+            background-color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .icono-usuario svg { width: 28px; height: 28px; fill: #6750A4; }
+        .sidebar-perfil span { font-size: 0.85rem; color: #1C1B1F; }
+
+        .nav-btn {
+            background-color: #6B5B95; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 10px 12px; font-size: 0.85rem;
+            text-align: left; cursor: pointer; width: 100%;
+        }
+
+        .nav-btn:hover { background-color: #4F378A; }
+        .nav-btn.activo { background-color: #4F378A; }
+        .sidebar-espaciador { flex: 1; }
+
+        .btn-cerrar-sesion {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 10px 12px; font-size: 0.85rem;
+            text-align: left; cursor: pointer; width: 100%;
+        }
+
+        .btn-cerrar-sesion:hover { background-color: #cc1f22; }
+
+        .contenido {
+            flex: 1;
+            padding: 28px 24px;
+            overflow-y: auto;
+        }
+
+        .contenido-header {
+            margin-bottom: 20px;
+        }
+
+        .contenido-header h2 { color: #fff; font-size: 1.3rem; font-weight: 600; }
+        .contenido-header p { color: #BFB7CC; font-size: 0.82rem; margin-top: 4px; }
+
+        /* columnas: lista de grupos a la izq, detalle a la der */
+        .layout-grupos {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        /* panel izquierdo: lista de grupos */
+        .panel-lista {
+            width: 260px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card {
+            background-color: #EADDFF;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: #6750A4;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 { color: #fff; font-size: 0.88rem; font-weight: 600; }
+
+        .card-cuerpo { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+
+        .fila-grupo {
+            background-color: #C9C9C9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .fila-grupo:hover { border-color: #6750A4; }
+        .fila-grupo.seleccionado { border-color: #6750A4; background-color: #BFB7CC; }
+
+        .fila-grupo .nombre-grupo { font-size: 0.85rem; color: #1C1B1F; font-weight: 500; }
+        .fila-grupo .cant-miembros { font-size: 0.72rem; color: #575757; }
+
+        .btn-nuevo-grupo {
+            background-color: #6B5B95; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 8px 12px; font-size: 0.82rem;
+            cursor: pointer; width: 100%; text-align: center;
+        }
+
+        .btn-nuevo-grupo:hover { background-color: #4F378A; }
+
+        /* panel derecho: detalle del grupo seleccionado */
+        .panel-detalle {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-detalle { width: 100%; }
+
+        /* campo nombre del grupo */
+        .campo-nombre-grupo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background-color: #EADDFF;
+            border-bottom: 1px solid #BFB7CC;
+        }
+
+        .campo-nombre-grupo label { font-size: 0.82rem; color: #575757; flex-shrink: 0; }
+
+        .campo-nombre-grupo input {
+            flex: 1;
+            padding: 6px 10px;
+            border: none; border-radius: 6px;
+            background-color: #fff;
+            font-size: 0.88rem; color: #1C1B1F;
+            outline: none;
+        }
+
+        .campo-nombre-grupo input:focus { box-shadow: 0 0 0 2px #6750A4; }
+
+        /* lista de miembros */
+        .lista-miembros { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+
+        .fila-miembro {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #C9C9C9;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .fila-miembro .datos-est { flex: 1; }
+        .fila-miembro .datos-est .carnet { font-size: 0.82rem; color: #1C1B1F; font-weight: 500; }
+        .fila-miembro .datos-est .nombre-est { font-size: 0.72rem; color: #575757; }
+
+        .btn-quitar-miembro {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 6px;
+            padding: 5px 10px; font-size: 0.75rem;
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        .sin-miembros { color: #6B6B6B; font-size: 0.82rem; padding: 4px 0; }
+
+        /* agregar miembro */
+        .agregar-miembro {
+            padding: 10px 16px 14px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-top: 1px solid #BFB7CC;
+        }
+
+        .agregar-miembro input {
+            flex: 1;
+            padding: 7px 10px;
+            border: none; border-radius: 8px;
+            background-color: #fff;
+            font-size: 0.85rem; color: #1C1B1F;
+            outline: none;
+        }
+
+        .agregar-miembro input:focus { box-shadow: 0 0 0 2px #6750A4; }
+
+        .btn-agregar {
+            background-color: #34C759; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 7px 16px; font-size: 0.82rem;
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        .btn-agregar:hover { background-color: #28a745; }
+
+        /* acciones del grupo */
+        .acciones-grupo {
+            padding: 8px 16px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-guardar-grupo {
+            background-color: #34C759; color: #fff;
+            border: none; border-radius: 20px;
+            padding: 8px 22px; font-size: 0.85rem; cursor: pointer;
+        }
+
+        .btn-guardar-grupo:hover { background-color: #28a745; }
+
+        .btn-eliminar-grupo {
+            background-color: #FF383C; color: #fff;
+            border: none; border-radius: 20px;
+            padding: 8px 16px; font-size: 0.82rem; cursor: pointer;
+        }
+
+        .btn-eliminar-grupo:hover { background-color: #cc1f22; }
+
+        .btn-atras {
+            background-color: #316AFB; color: #fff;
+            border: none; border-radius: 20px;
+            padding: 8px 22px; font-size: 0.85rem; cursor: pointer;
+        }
+
+        .btn-atras:hover { background-color: #1a53e0; }
+
+        .mensaje-ok { color: #34C759; font-size: 0.78rem; display: none; }
+        .mensaje-error { color: #FF383C; font-size: 0.78rem; display: none; }
+
+        /* estado vacio / cargando */
+        .estado-info { color: #BFB7CC; font-size: 0.85rem; padding: 12px 16px; }
+
+        /* placeholder cuando no hay grupo seleccionado */
+        .placeholder-detalle {
+            color: #BFB7CC;
+            font-size: 0.88rem;
+            padding: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-perfil">
+            <div class="icono-usuario">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+            </div>
+            <span id="nombreUsuario">Usuario</span>
+        </div>
+
+        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
+        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/crearTarea'">Crear tarea</button>
+
+        <div class="sidebar-espaciador"></div>
+        <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar sesion</button>
+    </aside>
+
+    <main class="contenido">
+        <div class="contenido-header">
+            <h2 id="tituloPantalla">Grupos de trabajo</h2>
+            <p id="subtitulo">Cargando...</p>
+        </div>
+
+        <div class="layout-grupos">
+
+            <!-- lista de grupos -->
+            <div class="panel-lista">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Grupos</h3>
+                    </div>
+                    <div class="card-cuerpo" id="listaGrupos">
+                        <p class="estado-info">Cargando grupos...</p>
+                    </div>
+                </div>
+                <button class="btn-nuevo-grupo" id="btnNuevoGrupo">+ Nuevo grupo</button>
+                <button class="btn-atras" id="btnAtras">Atras</button>
+            </div>
+
+            <!-- detalle del grupo seleccionado -->
+            <div class="panel-detalle" id="panelDetalle">
+                <div class="card">
+                    <p class="placeholder-detalle">Seleccione un grupo para ver y editar sus miembros.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const BASE = 'http://170.9.26.131:80';
+
+        const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
+        if (!usuario.idUsuario) window.location.href = BASE + '/login';
+        if (usuario.nombre) document.getElementById('nombreUsuario').textContent = usuario.nombre;
+
+        const params  = new URLSearchParams(window.location.search);
+        const idTarea = params.get('idTarea');
+        const nombreTarea = params.get('nombre') || 'Tarea';
+
+        document.getElementById('tituloPantalla').textContent = 'Grupos: ' + nombreTarea;
+        document.getElementById('subtitulo').textContent = 'Administre los grupos de esta tarea';
+
+        document.getElementById('btnAtras').onclick = () => {
+            window.location.href = BASE + '/verEntregas?idTarea=' + idTarea + '&nombre=' + encodeURIComponent(nombreTarea);
+        };
+
+        // estado local de grupos
+        let grupos = [];
+        let grupoSeleccionado = null;
+
+        function renderListaGrupos() {
+            const lista = document.getElementById('listaGrupos');
+            lista.innerHTML = '';
+
+            if (grupos.length === 0) {
+                lista.innerHTML = '<p class="estado-info">Sin grupos. Cree uno.</p>';
+                return;
+            }
+
+            grupos.forEach(g => {
+                const fila = document.createElement('div');
+                fila.className = 'fila-grupo' + (grupoSeleccionado && grupoSeleccionado.idGrupo === g.idGrupo ? ' seleccionado' : '');
+
+                const nombre = document.createElement('span');
+                nombre.className   = 'nombre-grupo';
+                nombre.textContent = g.nombre;
+
+                const cant = document.createElement('span');
+                cant.className   = 'cant-miembros';
+                cant.textContent = (g.miembros ? g.miembros.length : 0) + ' estudiantes';
+
+                fila.appendChild(nombre);
+                fila.appendChild(cant);
+                fila.onclick = () => seleccionarGrupo(g);
+                lista.appendChild(fila);
+            });
+        }
+
+        function seleccionarGrupo(grupo) {
+            grupoSeleccionado = grupo;
+            renderListaGrupos();
+            renderDetalleGrupo(grupo);
+        }
+
+        function renderDetalleGrupo(grupo) {
+            const panel = document.getElementById('panelDetalle');
+            panel.innerHTML = '';
+
+            const card = document.createElement('div');
+            card.className = 'card card-detalle';
+
+            // header
+            const header = document.createElement('div');
+            header.className = 'card-header';
+            header.innerHTML = '<h3>Detalle del grupo</h3>';
+
+            // campo nombre
+            const campoNombre = document.createElement('div');
+            campoNombre.className = 'campo-nombre-grupo';
+            campoNombre.innerHTML = '<label>Nombre</label>';
+            const inputNombre = document.createElement('input');
+            inputNombre.type  = 'text';
+            inputNombre.value = grupo.nombre;
+            campoNombre.appendChild(inputNombre);
+
+            // lista de miembros
+            const listaMiembros = document.createElement('div');
+            listaMiembros.className = 'lista-miembros';
+
+            const miembros = grupo.miembros || [];
+            if (miembros.length === 0) {
+                listaMiembros.innerHTML = '<p class="sin-miembros">Sin estudiantes en este grupo.</p>';
+            } else {
+                miembros.forEach(m => {
+                    listaMiembros.appendChild(crearFilaMiembro(m, grupo, listaMiembros));
+                });
+            }
+
+            // agregar miembro
+            const secAgregar = document.createElement('div');
+            secAgregar.className = 'agregar-miembro';
+
+            const inputCarnet = document.createElement('input');
+            inputCarnet.type        = 'text';
+            inputCarnet.placeholder = 'Carnet del estudiante';
+
+            const btnAgregar = document.createElement('button');
+            btnAgregar.className   = 'btn-agregar';
+            btnAgregar.textContent = 'Agregar';
+            btnAgregar.onclick = async () => {
+                const carnet = inputCarnet.value.trim();
+                if (!carnet) return;
+
+                try {
+                    const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ idGrupo: grupo.idGrupo, accion: 'agregar', carnet })
+                    });
+
+                    if (res.ok) {
+                        // actualizar estado local
+                        if (!grupo.miembros) grupo.miembros = [];
+                        grupo.miembros.push({ carnet, nombre: carnet });
+                        inputCarnet.value = '';
+                        seleccionarGrupo(grupo);
+                    }
+                } catch (_) {}
+            };
+
+            secAgregar.appendChild(inputCarnet);
+            secAgregar.appendChild(btnAgregar);
+
+            // acciones
+            const acciones = document.createElement('div');
+            acciones.className = 'acciones-grupo';
+
+            const btnEliminar = document.createElement('button');
+            btnEliminar.className   = 'btn-eliminar-grupo';
+            btnEliminar.textContent = 'Eliminar grupo';
+            btnEliminar.onclick = async () => {
+                if (!confirm('Seguro que desea eliminar este grupo?')) return;
+                try {
+                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupo, {
+                        method: 'DELETE'
+                    });
+                } catch (_) {}
+                grupos = grupos.filter(g => g.idGrupo !== grupo.idGrupo);
+                grupoSeleccionado = null;
+                renderListaGrupos();
+                panel.innerHTML = '<div class="card"><p class="placeholder-detalle">Seleccione un grupo para ver y editar sus miembros.</p></div>';
+            };
+
+            const btnGuardar = document.createElement('button');
+            btnGuardar.className   = 'btn-guardar-grupo';
+            btnGuardar.textContent = 'Guardar nombre';
+            btnGuardar.onclick = async () => {
+                const nuevoNombre = inputNombre.value.trim();
+                if (!nuevoNombre) return;
+                grupo.nombre = nuevoNombre;
+                try {
+                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupo, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nombre: nuevoNombre })
+                    });
+                } catch (_) {}
+                renderListaGrupos();
+            };
+
+            acciones.appendChild(btnEliminar);
+            acciones.appendChild(btnGuardar);
+
+            card.appendChild(header);
+            card.appendChild(campoNombre);
+            card.appendChild(listaMiembros);
+            card.appendChild(secAgregar);
+            card.appendChild(acciones);
+            panel.appendChild(card);
+        }
+
+        function crearFilaMiembro(miembro, grupo, contenedor) {
+            const fila = document.createElement('div');
+            fila.className = 'fila-miembro';
+
+            const datos = document.createElement('div');
+            datos.className = 'datos-est';
+            datos.innerHTML = '<div class="carnet">' + miembro.carnet + '</div>' +
+                              '<div class="nombre-est">' + (miembro.nombre || '') + '</div>';
+
+            const btnQuitar = document.createElement('button');
+            btnQuitar.className   = 'btn-quitar-miembro';
+            btnQuitar.textContent = 'Quitar';
+            btnQuitar.onclick = async () => {
+                try {
+                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ idGrupo: grupo.idGrupo, accion: 'quitar', carnet: miembro.carnet })
+                    });
+                } catch (_) {}
+                grupo.miembros = grupo.miembros.filter(m => m.carnet !== miembro.carnet);
+                fila.remove();
+                renderListaGrupos();
+            };
+
+            fila.appendChild(datos);
+            fila.appendChild(btnQuitar);
+            return fila;
+        }
+
+        document.getElementById('btnNuevoGrupo').addEventListener('click', async () => {
+            const nombre = prompt('Nombre del nuevo grupo:');
+            if (!nombre || !nombre.trim()) return;
+
+            try {
+                const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: nombre.trim(), miembros: [] })
+                });
+
+                const data = await res.json().catch(() => null);
+                if (res.ok) {
+                    const nuevoGrupo = { idGrupo: data.idGrupo || Date.now(), nombre: nombre.trim(), miembros: [] };
+                    grupos.push(nuevoGrupo);
+                    renderListaGrupos();
+                    seleccionarGrupo(nuevoGrupo);
+                }
+            } catch (_) {}
+        });
+
+        async function cargarGrupos() {
+            if (!idTarea) {
+                document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">No se especifico una tarea.</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos');
+                if (res.ok) {
+                    const data = await res.json();
+                    grupos = data.grupos || data || [];
+                    renderListaGrupos();
+                } else {
+                    document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">Error al cargar grupos.</p>';
+                }
+            } catch (_) {
+                document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">Error de conexion.</p>';
+            }
+        }
+
+        document.getElementById('btnCerrarSesion').addEventListener('click', () => {
+            sessionStorage.removeItem('usuario');
+            window.location.href = BASE + '/login';
+        });
+
+        cargarGrupos();
+    </script>
+</body>
+</html>
