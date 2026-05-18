@@ -152,54 +152,65 @@ $router->add('POST', '/api/auth/register', function () {
 
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
 
-    $pdo  = Database::getInstance()->getConnection();
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     try {
-        // insertar usuario base
-        $stmt = $pdo->prepare(
-            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
-             VALUES (?, ?, ?, ?, ?)"
-        );
-        $stmt->execute([
-            $data['correo'],
-            $data['nombre'],
-            $data['nombreUsuario'],
-            $hash,
-            $rol,
-        ]);
-        $idUsuario = (int) $pdo->lastInsertId();
-
-        // insertar en tabla de rol correspondiente
-        if ($rol === 'PROFESOR') {
-            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
-            $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([$codigo, $idUsuario]);
-        } else {
-            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
-            $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([$codigo, $idUsuario]);
-        }
-
-    } catch (PDOException $e) {
-        // correo o nombreUsuario duplicado
-        if ($e->getCode() === '23000') {
-            http_response_code(409);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
-            exit;
-        }
+        $stmt = $mysqli->prepare("INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $data['correo'], $data['nombre'], $data['nombreUsuario'], $hash, $rol);
+        $stmt->execute();
+    }
+    catch (Exception $e) {
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
         exit;
     }
+    //$pdo  = Database::getInstance()->getConnection();
+//
+    //try {
+    //    // insertar usuario base
+    //    $stmt = $pdo->prepare(
+    //        "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
+    //         VALUES (?, ?, ?, ?, ?)"
+    //    );
+    //    $stmt->execute([
+    //        $data['correo'],
+    //        $data['nombre'],
+    //        $data['nombreUsuario'],
+    //        $hash,
+    //        $rol
+    //    ]);
+    //    $idUsuario = (int) $pdo->lastInsertId();
+//
+    //    // insertar en tabla de rol correspondiente
+    //    if ($rol === 'PROFESOR') {
+    //        $codigo = $data['carnet'] ?? 'P' . $idUsuario;
+    //        $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
+    //        $stmt2->execute([$codigo, $idUsuario]);
+    //    } else {
+    //        $codigo = $data['carnet'] ?? 'E' . $idUsuario;
+    //        $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
+    //        $stmt2->execute([$codigo, $idUsuario]);
+    //    }
+//
+    //} catch (PDOException $e) {
+    //    // correo o nombreUsuario duplicado
+    //    if ($e->getCode() === '23000') {
+    //        http_response_code(409);
+    //        header('Content-Type: application/json; charset=utf-8');
+    //        echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
+    //        exit;
+    //    }
+    //    http_response_code(500);
+    //    header('Content-Type: application/json; charset=utf-8');
+    //    echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
+    //    exit;
+    //}
 
     http_response_code(201);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success'   => true,
-        'idUsuario' => $idUsuario,
+        'idUsuario' => 0,
         'estado'    => 'registrado',
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
