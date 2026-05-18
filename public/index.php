@@ -137,6 +137,8 @@ $router->add('POST', '/api/auth/register', function () {
     $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
     $pdo = new PDO($dsn, "admin", "password");
 
+    $stmt = $pdo->prepare('INSERT INTO usuario (correo, nombre, nombreUsuario, contrasena, rol) VALUES (?, ?, ?, ?, ?)');
+    
     //try {
     //    // insertar usuario base
     //    $stmt = $pdo->prepare(
