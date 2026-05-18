@@ -53,25 +53,39 @@
                 return;
             }
 
-            try {
-                const response = await fetch('http://170.9.26.131:80/api/auth/register', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
-                });
+            const response = await fetch('http://170.9.26.131:80/api/auth/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
+            });
 
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}: ${response.statusText}`);
-                }
-
-                const errorData = await response.json();
-                console.log('Detalle del servidor:', errorData);
-                alert('Registro exitoso. Intente de nuevo.');
-
-            } catch (error) {
-                console.error('Error al registrarse:', error);
-                alert('Ocurrió un error al registrarse. Intente de nuevo.');
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
+
+            const errorData = await response.json();
+            console.log('Detalle del servidor:', errorData);
+            alert('Registro exitoso. Intente de nuevo.');
+
+            //try {
+            //    const response = await fetch('http://170.9.26.131:80/api/auth/register', {
+            //        method: 'POST',
+            //        headers: {'Content-Type': 'application/json'},
+            //        body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
+            //    });
+//
+            //    if (!response.ok) {
+            //        throw new Error(`Error ${response.status}: ${response.statusText}`);
+            //    }
+//
+            //    const errorData = await response.json();
+            //    console.log('Detalle del servidor:', errorData);
+            //    alert('Registro exitoso. Intente de nuevo.');
+//
+            //} catch (error) {
+            //    console.error('Error al registrarse:', error);
+            //    alert('Ocurrió un error al registrarse. Intente de nuevo.');
+            //}
         });
     </script>
 </body>
