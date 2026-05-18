@@ -137,30 +137,6 @@ $router->add('POST', '/api/auth/register', function () {
     $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
     $pdo = new PDO($dsn, "admin", "password");
 
-    $stmt = $pdo->prepare(
-            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
-             VALUES (?, ?, ?, ?, ?)"
-    );
-    $stmt->execute([
-        $data['correo'],
-        $data['nombre'],
-        $data['nombreUsuario'],
-        $hash,
-        $rol
-    ]);
-    $idUsuario = (int) $pdo->lastInsertId();
-
-    // insertar en tabla de rol correspondiente
-    if ($rol === 'PROFESOR') {
-        $codigo = $data['carnet'] ?? 'P' . $idUsuario;
-        $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
-        $stmt2->execute([$codigo, $idUsuario]);
-    } else {
-        $codigo = $data['carnet'] ?? 'E' . $idUsuario;
-        $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
-        $stmt2->execute([$codigo, $idUsuario]);
-    }
-
     //try {
     //    // insertar usuario base
     //    $stmt = $pdo->prepare(
@@ -205,7 +181,7 @@ $router->add('POST', '/api/auth/register', function () {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success'   => true,
-        'idUsuario' => $idUsuario,
+        'idUsuario' => 0,
         'estado'    => 'registrado',
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
