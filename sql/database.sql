@@ -10,7 +10,9 @@ CREATE TABLE IF NOT EXISTS Usuario (
     idUsuario       INT             AUTO_INCREMENT,
     correo          VARCHAR(255)    NOT NULL UNIQUE,
     nombreUsuario   VARCHAR(100)    NOT NULL UNIQUE,
+    nombre          VARCHAR(255)    NOT NULL,
     contrasena      VARCHAR(255)    NOT NULL,
+    rol             ENUM('ESTUDIANTE','PROFESOR') NOT NULL DEFAULT 'ESTUDIANTE',
     fechaCreacion   DATETIME        NOT NULL DEFAULT NOW(),
     PRIMARY KEY (idUsuario),
     CONSTRAINT chk_correo CHECK (correo REGEXP '^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$')

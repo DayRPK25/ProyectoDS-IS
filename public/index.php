@@ -23,15 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // ── 2. Autoloader ─────────────────────────────────────────
-// Carga automaticamente las clases segun convencion de nombres
-// Nombre de clase → archivo PHP en el directorio correspondiente
+// Carga automaticamente las clases segun convencion de nombres.
+// Busca en app/ (plano) y en todos los subdirectorios de model/
 spl_autoload_register(function (string $class): void {
-    // Mapa de directorios donde buscar clases
     $directorios = [
         __DIR__ . '/../app/core/',
         __DIR__ . '/../app/models/',
         __DIR__ . '/../app/controllers/',
-        __DIR__ . '/../app/services/'
+        __DIR__ . '/../app/services/',
+        // subdirectorios de model/
+        __DIR__ . '/../model/Auth/',
+        __DIR__ . '/../model/Core/',
+        __DIR__ . '/../model/Tareas/',
+        __DIR__ . '/../model/Archivos/',
+        __DIR__ . '/../model/Editor/',
+        __DIR__ . '/../model/Bitacora/',
     ];
 
     foreach ($directorios as $dir) {
@@ -41,7 +47,6 @@ spl_autoload_register(function (string $class): void {
             return;
         }
     }
-    // Si no se encuentra la clase lanzamos error descriptivo
     throw new RuntimeException("Clase no encontrada: {$class}");
 });
 
@@ -87,48 +92,108 @@ function query(PDO $pdo, string $sql, array $params = []): PDOStatement {
 // API para el Backend
 $router->add('POST', '/api/auth/login', function () {
     $data = json_decode(file_get_contents('php://input'), true);
+
+    if (empty($data['correo']) || empty($data['contrasena'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'correo y contrasena requeridos']);
+        exit;
+    }
+
     $pdo = Database::getInstance()->getConnection();
-    //$queryResult = query($pdo,
-    //    "SELECT * FROM Usuario WHERE correo = ?",
-    //    [$data['correo']]
-    //    )->fetch() ?: [];
+
+    // busca el usuario por correo
+    $stmt = $pdo->prepare("SELECT * FROM Usuario WHERE correo = ?");
+    $stmt->execute([$data['correo']]);
+    $usuario = $stmt->fetch();
+
+    if (!$usuario || !password_verify($data['contrasena'], $usuario['contrasena'])) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'credenciales invalidas']);
+        exit;
+    }
+
     $response = [
-        'idUsuario' => 1,   //$queryResult['idUsuario'],               // Hay que recuperar esto en la base de datos
-        'nombre'    => 'usuario',   //$queryResult['nombre'],        // Hay que recuperar esto en la base de datos
-        'rol'       => 'ESTUDIANTE',    // Hay que recuperar esto en la base de datos
-        'token'     => 'abc123',         // Esto se tiene que generar
-        'success'   => true
+        'success'   => true,
+        'idUsuario' => $usuario['idUsuario'],
+        'nombre'    => $usuario['nombre'],
+        'rol'       => $usuario['rol'],
+        // token simple por ahora: en produccion reemplazar por JWT
+        'token'     => bin2hex(random_bytes(16)),
     ];
+
     http_response_code(200);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
     exit;
 });
 
 $router->add('POST', '/api/auth/register', function () {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // 1. Hashear la contraseña antes de insertar
+    $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
+    foreach ($campos as $campo) {
+        if (empty($data[$campo])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => "campo requerido: {$campo}"]);
+            exit;
+        }
+    }
+
+    $rol = strtoupper($data['rol']);
+    if (!in_array($rol, ['ESTUDIANTE', 'PROFESOR'], true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'rol invalido, debe ser ESTUDIANTE o PROFESOR']);
+        exit;
+    }
+
     $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
+    $pdo  = Database::getInstance()->getConnection();
 
-    $pdo = Database::getInstance()->getConnection();
-    // query($pdo,
-    //     "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena) VALUES (?, ?, ?, ?)",
-    //     [$data['correo'], $data['nombre'], $data['nombreUsuario'], $hash]
-    // );
+    try {
+        // insertar usuario base
+        $stmt = $pdo->prepare(
+            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
+             VALUES (?, ?, ?, ?, ?)"
+        );
+        $stmt->execute([
+            $data['correo'],
+            $data['nombre'],
+            $data['nombreUsuario'],
+            $hash,
+            $rol,
+        ]);
+        $idUsuario = (int) $pdo->lastInsertId();
 
-    // 2. Recuperar el ID del usuario recién insertado
-    // $idUsuario = $pdo->lastInsertId();
+        // insertar en tabla de rol correspondiente
+        if ($rol === 'PROFESOR') {
+            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
+            $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
+            $stmt2->execute([$codigo, $idUsuario]);
+        } else {
+            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
+            $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
+            $stmt2->execute([$codigo, $idUsuario]);
+        }
 
-    $response = [
-        'idUsuario' => 0,
-        'estado'    => 'registrado'
-    ];
+    } catch (PDOException $e) {
+        // correo o nombreUsuario duplicado
+        if ($e->getCode() === '23000') {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'error' => 'correo o nombre de usuario ya existe']);
+            exit;
+        }
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'error interno al registrar']);
+        exit;
+    }
 
-    http_response_code(201); // 201 = Created, más correcto que 200 para inserciones
+    http_response_code(201);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    echo json_encode([
+        'success'   => true,
+        'idUsuario' => $idUsuario,
+        'estado'    => 'registrado',
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 });
 
