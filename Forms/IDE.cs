@@ -1,4 +1,5 @@
 ﻿using ProyectoDS_IS.Forms;
+using ProyectoDS_IS.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,9 +7,14 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 
@@ -16,11 +22,169 @@ namespace ProyectoDS_IS
 {
     public partial class IDE : Form
     {
+        private string directorioActual = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private int inicioComando = 0;
+        private int idArchivo = 0;
+
+        private string CalcularSHA256(string rutaArchivo)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            using (FileStream stream = File.OpenRead(rutaArchivo))
+            {
+                byte[] hashBytes = sha256.ComputeHash(stream);
+                return Convert.ToHexString(hashBytes);
+            }
+        }
+        private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Evitar borrar el prompt
+            if ((e.KeyCode == Keys.Back || e.KeyCode == Keys.Left) &&
+                richTextBox1.SelectionStart <= inicioComando)
+            {
+                e.SuppressKeyPress = true;
+                return;
+            }
+
+            // Evitar escribir antes del prompt
+            if (richTextBox1.SelectionStart < inicioComando)
+            {
+                richTextBox1.SelectionStart = richTextBox1.TextLength;
+            }
+
+            // Ejecutar comando
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                string texto = richTextBox1.Text;
+                int index = texto.LastIndexOf(">>> ");
+
+                string comando = texto.Substring(index + 4).Trim();
+
+                EjecutarComandoTerminal(comando);
+            }
+        }
+
+        private void MostrarPrompt()
+        {
+            richTextBox1.AppendText(directorioActual + " >>> ");
+            inicioComando = richTextBox1.TextLength;
+            richTextBox1.SelectionStart = richTextBox1.TextLength;
+        }
+
+        private void EjecutarComandoReal(string comando)
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "cmd.exe";
+                psi.Arguments = "/c " + comando;
+                psi.WorkingDirectory = directorioActual;
+                psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = true;
+                psi.UseShellExecute = false;
+                psi.CreateNoWindow = true;
+
+                Process proceso = new Process();
+                proceso.StartInfo = psi;
+                proceso.Start();
+
+                string salida = proceso.StandardOutput.ReadToEnd();
+                string errores = proceso.StandardError.ReadToEnd();
+
+                proceso.WaitForExit();
+
+                richTextBox1.AppendText(salida);
+                richTextBox1.AppendText(errores);
+                MostrarPrompt();
+            }
+            catch (Exception ex)
+            {
+                richTextBox1.AppendText("Error: " + ex.Message);
+                MostrarPrompt();
+            }
+        }
+
+        private void CambiarDirectorio(string nuevaRuta)
+        {
+            nuevaRuta = nuevaRuta.Trim().Trim('"');
+
+            string rutaFinal;
+
+            if (Path.IsPathRooted(nuevaRuta))
+            {
+                rutaFinal = nuevaRuta;
+            }
+            else
+            {
+                rutaFinal = Path.Combine(directorioActual, nuevaRuta);
+            }
+
+            rutaFinal = Path.GetFullPath(rutaFinal);
+
+            if (Directory.Exists(rutaFinal))
+            {
+                directorioActual = rutaFinal;
+            }
+            else
+            {
+                richTextBox1.AppendText("El sistema no puede encontrar la ruta especificada.\n");
+            }
+        }
+
+
+        private void EjecutarComandoTerminal(string comando)
+        {
+            richTextBox1.AppendText("\n");
+
+            if (comando.Trim() == "")
+            {
+                MostrarPrompt();
+                return;
+            }
+
+            if (comando == "clear" || comando == "cls")
+            {
+                richTextBox1.Clear();
+                MostrarPrompt();
+                return;
+            }
+
+            if (comando.StartsWith("cd "))
+            {
+                CambiarDirectorio(comando.Substring(3).Trim());
+                MostrarPrompt();
+                return;
+            }
+
+            EjecutarComandoReal(comando);
+        }
+
+
+        private void fastColoredTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control &&
+                (e.KeyCode == Keys.C || e.KeyCode == Keys.V || e.KeyCode == Keys.X))
+            {
+                e.SuppressKeyPress = true;
+            }
+        }
+
+
         bool guardado = false;
         string ruta_archivo = "";
         public IDE()
         {
             InitializeComponent();
+            fastColoredTextBox1.ContextMenuStrip = null;
+            fastColoredTextBox1.KeyDown += fastColoredTextBox1_KeyDown;
+            fastColoredTextBox1.AllowDrop = false;
+            fastColoredTextBox1.DragEnter += (s, e) =>
+            {
+                e.Effect = DragDropEffects.None;
+            };
+            richTextBox1.KeyDown += richTextBox1_KeyDown;
+            richTextBox1.Text = directorioActual + " >>> ";
         }
 
         private void CargarCarpeta(string rutaCarpeta, TreeNode nodoPadre)
@@ -74,6 +238,12 @@ namespace ProyectoDS_IS
                     richTextBox1.AppendText("Archivo guardado en:\n" + saveFile.FileName + "\n");
                     guardado = true;
                     ruta_archivo = saveFile.FileName;
+                    string nombreArchivo = Path.GetFileName(saveFile.FileName);
+                    DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
+                    DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
+                    string firma = CalcularSHA256(saveFile.FileName);
+                    string contenido = File.ReadAllText(ruta_archivo);
+                    ApiFake.Instance.SaveArchivo(ApiFake.Instance.CurrentUser,nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
                 }
             }
             try
@@ -99,7 +269,9 @@ namespace ProyectoDS_IS
 
                 proceso.WaitForExit();
 
-                richTextBox1.Text = salida + errores;
+                richTextBox1.AppendText(salida);
+                richTextBox1.AppendText(errores);
+                richTextBox1.AppendText("\n>>> ");
             }
             catch (Exception ex)
             {
@@ -139,11 +311,23 @@ namespace ProyectoDS_IS
                     richTextBox1.AppendText("Archivo guardado en:\n" + saveFile.FileName + "\n");
                     guardado = true;
                     ruta_archivo = saveFile.FileName;
+                    string nombreArchivo = Path.GetFileName(saveFile.FileName);
+                    DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
+                    DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
+                    string firma = CalcularSHA256(saveFile.FileName);
+                    string contenido = File.ReadAllText(ruta_archivo);
+                    ApiFake.Instance.SaveArchivo(ApiFake.Instance.CurrentUser, nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
                 }
             }
             else
             {
                 File.WriteAllText(ruta_archivo, fastColoredTextBox1.Text);
+                string nombreArchivo = Path.GetFileName(ruta_archivo);
+                DateTime fechaCreacion = File.GetCreationTime(ruta_archivo);
+                DateTime fechaModificacion = File.GetLastWriteTime(ruta_archivo);
+                string firma = CalcularSHA256(ruta_archivo);
+                string contenido = File.ReadAllText(ruta_archivo);
+                ApiFake.Instance.UpdateArchivo(ApiFake.Instance.CurrentUser, idArchivo, contenido, fechaModificacion, firma);
             }
 
         }
@@ -159,10 +343,25 @@ namespace ProyectoDS_IS
             {
                 if (Path.GetExtension(openFileDialog.FileName) == ".py")
                 {
+                    string firma = CalcularSHA256(openFileDialog.FileName);
+                    string json = ApiFake.Instance.VerifyArchivo(
+                        ApiFake.Instance.CurrentUser, Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName), File.GetLastWriteTime(openFileDialog.FileName), firma
+
+                     );
+
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    bool success = doc.RootElement.GetProperty("success").GetBoolean();
+                    string message = doc.RootElement.GetProperty("message").GetString();
+                    if (!success)
+                    {
+                        MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                     fastColoredTextBox1.Text = File.ReadAllText(openFileDialog.FileName);
                     label1.Text = Path.GetFileName(openFileDialog.FileName);
                     guardado = true;
                     ruta_archivo = openFileDialog.FileName;
+
                 }
                 else
                 {
@@ -223,6 +422,20 @@ namespace ProyectoDS_IS
             {
                 if (Path.GetExtension(ruta) == ".py")
                 {
+                    string firma = CalcularSHA256(ruta);
+                    string json = ApiFake.Instance.VerifyArchivo(
+                        ApiFake.Instance.CurrentUser, Path.GetFileName(ruta), File.GetCreationTime(ruta), File.GetLastWriteTime(ruta), firma
+
+                     );
+
+                    JsonDocument doc = JsonDocument.Parse(json);
+                    bool success = doc.RootElement.GetProperty("success").GetBoolean();
+                    string message = doc.RootElement.GetProperty("message").GetString();
+                    if (!success)
+                    {
+                        MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                     fastColoredTextBox1.Text = File.ReadAllText(ruta);
                     label1.Text = Path.GetFileName(ruta);
                     guardado = true;
@@ -241,6 +454,11 @@ namespace ProyectoDS_IS
             MPrincipal principal = new MPrincipal();
             principal.Show();
             this.Hide();
+        }
+
+        private void archivoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

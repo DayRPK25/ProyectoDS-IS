@@ -339,5 +339,79 @@ namespace ProyectoDS_IS.Models
     }";
         }
 
+        public string SaveArchivo(
+            string username,
+    string nombre,
+    string ruta,
+    string contenido,
+    DateTime fechaCreacion,
+    DateTime fechaModificacion,
+    string firma)
+        {
+            // Simulación de guardado exitoso
+
+            return @"{
+        ""success"": true,
+        ""message"": ""Archivo guardado correctamente"",
+        ""archivo"": {
+            ""idArchivoP"": 1,
+            ""nombre"": """ + nombre + @""",
+            ""ruta"": """ + ruta.Replace(@"\", @"\\") + @""",
+            ""contenido"": """ + contenido.Replace("\"", "\\\"") + @""",
+            ""fechaCreacion"": """ + fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss") + @""",
+            ""fechaModificacion"": """ + fechaModificacion.ToString("yyyy-MM-dd HH:mm:ss") + @""",
+            ""firma"": """ + firma + @"""
+        }
+    }";
+        }
+
+        public string UpdateArchivo(
+            string username,
+    int idArchivoP,
+    string contenido,
+    DateTime fechaModificacion,
+    string firma)
+        {
+            // Simulación de actualización exitosa
+
+            return @"{
+        ""success"": true,
+        ""message"": ""Archivo actualizado correctamente"",
+        ""archivo"": {
+            ""idArchivoP"": " + idArchivoP + @",
+            ""contenido"": """ + contenido.Replace("\"", "\\\"") + @""",
+            ""fechaModificacion"": """ + fechaModificacion.ToString("yyyy-MM-dd HH:mm:ss") + @""",
+            ""firma"": """ + firma + @"""
+        }
+    }";
+        }
+
+
+        public string VerifyArchivo(
+            string username,
+    string nombre,
+    DateTime fechaCreacion,
+    DateTime fechaModificacion,
+    string hash)
+        {
+            // Simulación:
+            // Hash válido almacenado en BD
+
+            string hashGuardado =
+                "ABC123HASHDEMO";
+
+            bool valido = hash == hashGuardado;
+
+            return @"{
+        ""success"": true,
+        ""valid"": " + valido.ToString().ToLower() + @",
+        ""message"": """ +
+                (valido
+                    ? "Archivo válido"
+                    : "El archivo fue modificado fuera del IDE")
+                + @"""
+    }";
+        }
+
     }
 }

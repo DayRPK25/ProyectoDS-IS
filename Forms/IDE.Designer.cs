@@ -41,12 +41,12 @@
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
+            toolStripLabel1 = new ToolStripLabel();
             richTextBox1 = new RichTextBox();
             label1 = new Label();
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
             treeView1 = new TreeView();
-            toolStripLabel1 = new ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)fastColoredTextBox1).BeginInit();
             menuStrip2.SuspendLayout();
             toolStrip1.SuspendLayout();
@@ -84,7 +84,7 @@
             fastColoredTextBox1.Dock = DockStyle.Fill;
             fastColoredTextBox1.Font = new Font("Courier New", 9.75F);
             fastColoredTextBox1.ForeColor = SystemColors.ControlText;
-            //fastColoredTextBox1.Hotkeys = resources.GetString("fastColoredTextBox1.Hotkeys");
+            fastColoredTextBox1.Hotkeys = resources.GetString("fastColoredTextBox1.Hotkeys");
             fastColoredTextBox1.IsReplaceMode = false;
             fastColoredTextBox1.Location = new Point(0, 0);
             fastColoredTextBox1.Name = "fastColoredTextBox1";
@@ -116,18 +116,19 @@
             archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
             archivoToolStripMenuItem.Size = new Size(60, 20);
             archivoToolStripMenuItem.Text = "Archivo";
+            archivoToolStripMenuItem.Click += archivoToolStripMenuItem_Click;
             // 
             // abrirArchivoToolStripMenuItem
             // 
             abrirArchivoToolStripMenuItem.Name = "abrirArchivoToolStripMenuItem";
-            abrirArchivoToolStripMenuItem.Size = new Size(144, 22);
+            abrirArchivoToolStripMenuItem.Size = new Size(180, 22);
             abrirArchivoToolStripMenuItem.Text = "Abrir Archivo";
             abrirArchivoToolStripMenuItem.Click += abrirArchivoToolStripMenuItem_Click;
             // 
             // abrirCarpetaToolStripMenuItem
             // 
             abrirCarpetaToolStripMenuItem.Name = "abrirCarpetaToolStripMenuItem";
-            abrirCarpetaToolStripMenuItem.Size = new Size(144, 22);
+            abrirCarpetaToolStripMenuItem.Size = new Size(180, 22);
             abrirCarpetaToolStripMenuItem.Text = "Abrir Carpeta";
             abrirCarpetaToolStripMenuItem.Click += abrirCarpetaToolStripMenuItem_Click;
             // 
@@ -155,7 +156,7 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripLabel1 });
             toolStrip1.Location = new Point(188, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(118, 25);
+            toolStrip1.Size = new Size(87, 25);
             toolStrip1.TabIndex = 4;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -179,6 +180,15 @@
             toolStripButton2.Text = "toolStripButton2";
             toolStripButton2.Click += toolStripButton2_Click;
             // 
+            // toolStripLabel1
+            // 
+            toolStripLabel1.BackColor = Color.IndianRed;
+            toolStripLabel1.ImageTransparentColor = Color.IndianRed;
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new Size(29, 22);
+            toolStripLabel1.Text = "Salir";
+            toolStripLabel1.Click += toolStripLabel1_Click_1;
+            // 
             // richTextBox1
             // 
             richTextBox1.BackColor = SystemColors.MenuText;
@@ -188,7 +198,7 @@
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new Size(839, 162);
             richTextBox1.TabIndex = 5;
-            richTextBox1.Text = "";
+            richTextBox1.Text = ">>> ";
             richTextBox1.TextChanged += richTextBox1_TextChanged;
             // 
             // label1
@@ -246,15 +256,6 @@
             treeView1.Size = new Size(241, 567);
             treeView1.TabIndex = 0;
             treeView1.NodeMouseDoubleClick += treeView1_NodeMouseDoubleClick;
-            // 
-            // toolStripLabel1
-            // 
-            toolStripLabel1.BackColor = Color.IndianRed;
-            toolStripLabel1.ImageTransparentColor = Color.IndianRed;
-            toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(29, 22);
-            toolStripLabel1.Text = "Salir";
-            toolStripLabel1.Click += toolStripLabel1_Click_1;
             // 
             // IDE
             // 
