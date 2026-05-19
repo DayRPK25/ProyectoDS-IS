@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using ProyectoDS_IS.Models;
 using System.Windows.Forms.Design;
+using ProyectoDS_IS.Services;
 
 namespace ProyectoDS_IS.Forms
 {
@@ -36,7 +37,7 @@ namespace ProyectoDS_IS.Forms
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             string pattern = @"^[a-zA-Z._%+-]+@estudiantec\.cr$";
             if (!Regex.IsMatch(textBox1.Text, pattern, RegexOptions.IgnoreCase))
@@ -50,18 +51,19 @@ namespace ProyectoDS_IS.Forms
                 MessageBox.Show("La contraseña debe tener al menos 8 caracteres.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            string json = ApiFake.Instance.Login(
+            string json = await ApiService.Instance.Login(
                 textBox1.Text,
                 textBox2.Text
             );
 
             JsonDocument doc = JsonDocument.Parse(json);
             bool success = doc.RootElement.GetProperty("success").GetBoolean();
-            string message = doc.RootElement.GetProperty("message").GetString();
+            string message = "";
 
             // Si login falla
             if (!success)
             {
+                message = doc.RootElement.GetProperty("error").GetString();
                 MessageBox.Show(
                     message,
                     "Login incorrecto",
@@ -73,10 +75,12 @@ namespace ProyectoDS_IS.Forms
             }
 
             string token = doc.RootElement.GetProperty("token").GetString();
-            string userName = doc.RootElement.GetProperty("user").GetProperty("name").GetString();
+            string userName = doc.RootElement.GetProperty("nombre").GetString();
+            int idUsuario = doc.RootElement.GetProperty("idUsuario").GetInt16();
 
-            ApiFake.Instance.Token = token;
-            ApiFake.Instance.CurrentUser = userName;
+            ApiService.Instance.Token = token;
+            ApiService.Instance.CurrentUser = userName;
+            ApiService.Instance.idUsuario = idUsuario;
 
             MPrincipal principal = new MPrincipal();
             principal.Show();

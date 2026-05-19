@@ -1,4 +1,5 @@
 ﻿using ProyectoDS_IS.Models;
+using ProyectoDS_IS.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,8 +26,9 @@ namespace ProyectoDS_IS.Forms
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
+            string nombre = textBox5.Text;
             //Nombre de usuario
             if (textBox1.Text.Length < 5)
             {
@@ -34,18 +36,6 @@ namespace ProyectoDS_IS.Forms
                 return;
             }
 
-
-            string json = ApiFake.Instance.UsernameExists(
-                textBox1.Text
-            );
-            JsonDocument doc = JsonDocument.Parse(json);
-            bool success = doc.RootElement.GetProperty("success").GetBoolean();
-            string message = doc.RootElement.GetProperty("message").GetString();
-            if (!success)
-            {
-                MessageBox.Show("El nombre de usuario ya está registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
 
             //------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,16 +47,7 @@ namespace ProyectoDS_IS.Forms
                 MessageBox.Show("El correo debe tener extensión @estudiantec.cr", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            json = ApiFake.Instance.EmailExists(textBox2.Text);
-            doc = JsonDocument.Parse(json);
-            success = doc.RootElement.GetProperty("success").GetBoolean();
-            message = doc.RootElement.GetProperty("message").GetString();
 
-            if (!success)
-            {
-                MessageBox.Show("El correo ya está registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
             //------------------------------------------------------------------------------------------------------------------------------------------
 
             //Carnet:
@@ -78,16 +59,7 @@ namespace ProyectoDS_IS.Forms
                 return;
             }
 
-            json = ApiFake.Instance.CarnetExists(textBox3.Text);
-            doc = JsonDocument.Parse(json);
-            success = doc.RootElement.GetProperty("success").GetBoolean();
-            message = doc.RootElement.GetProperty("message").GetString();
 
-            if (!success)
-            {
-                MessageBox.Show("El carnet ya está registrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
 
             //------------------------------------------------------------------------------------------------------------------------------------------
             //Contraseña:
@@ -98,17 +70,18 @@ namespace ProyectoDS_IS.Forms
                 return;
             }
             //-----------------------------------------------------------------------------------------------------------------------
-            json = ApiFake.Instance.Register(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text);
-            doc = JsonDocument.Parse(json);
-            success = doc.RootElement.GetProperty("success").GetBoolean();
-            message = doc.RootElement.GetProperty("message").GetString();
+            string json = await ApiService.Instance.Registro(textBox2.Text, textBox5.Text, textBox1.Text, textBox4.Text, textBox3.Text);
+            JsonDocument doc = JsonDocument.Parse(json);
+            bool success = doc.RootElement.GetProperty("success").GetBoolean();
+            string message = "";
             if (!success)
             {
+                message = doc.RootElement.GetProperty("error").GetString();
                 MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-
+            message = doc.RootElement.GetProperty("estado").GetString();
             MessageBox.Show(message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             this.Hide();
             LoginF login = new LoginF();
@@ -124,6 +97,16 @@ namespace ProyectoDS_IS.Forms
             this.Hide();
             LoginF login = new LoginF();
             login.Show();
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

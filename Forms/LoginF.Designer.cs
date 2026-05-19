@@ -149,9 +149,9 @@
             label2.ForeColor = Color.Black;
             label2.Location = new Point(19, 149);
             label2.Name = "label2";
-            label2.Size = new Size(169, 21);
+            label2.Size = new Size(61, 21);
             label2.TabIndex = 2;
-            label2.Text = "Nombre de Usuario....";
+            label2.Text = "Correo";
             label2.Click += label2_Click;
             // 
             // panel3

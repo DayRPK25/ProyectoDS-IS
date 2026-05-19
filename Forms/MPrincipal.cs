@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.Json;
 using ProyectoDS_IS.Models;
+using ProyectoDS_IS.Services;
 
 namespace ProyectoDS_IS.Forms
 {
@@ -80,7 +81,7 @@ namespace ProyectoDS_IS.Forms
         {
             InitializeComponent();
             CargarCursos();
-            label2.Text = ApiFake.Instance.CurrentUser;
+            label2.Text = ApiService.Instance.CurrentUser;
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
