@@ -10,17 +10,18 @@ using System.Windows.Forms;
 using System.Text.Json;
 using ProyectoDS_IS.Models;
 using ProyectoDS_IS.Services;
+using System.Diagnostics;
 
 namespace ProyectoDS_IS.Forms
 {
     public partial class MPrincipal : Form
     {
 
-        private void CargarCursos()
+        private async void CargarCursos()
         {
             flowLayoutPanel1.Controls.Clear();
 
-            string json = ApiFake.Instance.GetCursos(ApiFake.Instance.CurrentUser);
+            string json = await ApiService.Instance.cargarCursos(ApiService.Instance.idUsuario);
 
             JsonDocument doc = JsonDocument.Parse(json);
 
@@ -36,9 +37,10 @@ namespace ProyectoDS_IS.Forms
 
             foreach (JsonElement curso in cursos.EnumerateArray())
             {
-                string nombre = curso.GetProperty("name").GetString();
-                string profesor = curso.GetProperty("teacher").GetString();
-
+                string nombre = curso.GetProperty("nombreCurso").GetString();
+                Debug.WriteLine(nombre);
+                string profesor = curso.GetProperty("nombre").GetString();
+                Debug.WriteLine(profesor);
                 Panel tarjeta = new Panel();
                 tarjeta.Width = flowLayoutPanel1.Width - 30;
                 tarjeta.Height = 90;
@@ -61,8 +63,8 @@ namespace ProyectoDS_IS.Forms
                 btnVer.Width = 80;
                 btnVer.Height = 35;
                 btnVer.Location = new Point(tarjeta.Width - 100, 25);
-                int idCurso = curso.GetProperty("id").GetInt32();
-
+                int idCurso = curso.GetProperty("idCurso").GetInt32();
+                Debug.WriteLine(idCurso);
                 btnVer.Click += (sender, e) =>
                 {
                     CursoT curso = new CursoT(idCurso, nombre);

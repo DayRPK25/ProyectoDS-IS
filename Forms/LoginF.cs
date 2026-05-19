@@ -12,6 +12,8 @@ using System.Text.Json;
 using ProyectoDS_IS.Models;
 using System.Windows.Forms.Design;
 using ProyectoDS_IS.Services;
+using System.Diagnostics;
+
 
 namespace ProyectoDS_IS.Forms
 {
@@ -81,6 +83,7 @@ namespace ProyectoDS_IS.Forms
             ApiService.Instance.Token = token;
             ApiService.Instance.CurrentUser = userName;
             ApiService.Instance.idUsuario = idUsuario;
+            Debug.WriteLine(idUsuario);
 
             MPrincipal principal = new MPrincipal();
             principal.Show();
