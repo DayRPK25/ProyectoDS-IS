@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EspcT));
             panel2 = new Panel();
             label1 = new Label();
-            pictureBox1 = new PictureBox();
             button1 = new Button();
+            pictureBox1 = new PictureBox();
             label2 = new Label();
             label4 = new Label();
             label6 = new Label();
@@ -42,9 +42,9 @@
             label7 = new Label();
             label9 = new Label();
             panel1 = new Panel();
-            richTextBox1 = new RichTextBox();
-            button2 = new Button();
             button3 = new Button();
+            button2 = new Button();
+            richTextBox1 = new RichTextBox();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
@@ -65,25 +65,13 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Semibold", 15F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             label1.Location = new Point(62, 20);
             label1.Name = "label1";
-            label1.Size = new Size(63, 28);
+            label1.Size = new Size(37, 15);
             label1.TabIndex = 2;
             label1.Text = "label1";
             label1.Click += label1_Click;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(12, 12);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(44, 42);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 1;
-            pictureBox1.TabStop = false;
-            pictureBox1.Click += pictureBox1_Click;
             // 
             // button1
             // 
@@ -96,6 +84,18 @@
             button1.TabIndex = 2;
             button1.Text = "Salir";
             button1.UseVisualStyleBackColor = false;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = Color.Transparent;
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(12, 12);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(44, 42);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 1;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
             // 
             // label2
             // 
@@ -211,17 +211,18 @@
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
-            // richTextBox1
+            // button3
             // 
-            richTextBox1.BackColor = SystemColors.InfoText;
-            richTextBox1.ForeColor = Color.White;
-            richTextBox1.Location = new Point(247, 356);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.ReadOnly = true;
-            richTextBox1.Size = new Size(789, 274);
-            richTextBox1.TabIndex = 18;
-            richTextBox1.Text = "";
-            richTextBox1.TextChanged += richTextBox1_TextChanged;
+            button3.BackColor = Color.DarkSlateBlue;
+            button3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            button3.ForeColor = Color.White;
+            button3.Location = new Point(260, 672);
+            button3.Name = "button3";
+            button3.Size = new Size(139, 53);
+            button3.TabIndex = 20;
+            button3.Text = "Revisar Historial";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // button2
             // 
@@ -236,18 +237,17 @@
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
             // 
-            // button3
+            // richTextBox1
             // 
-            button3.BackColor = Color.DarkSlateBlue;
-            button3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(260, 672);
-            button3.Name = "button3";
-            button3.Size = new Size(139, 53);
-            button3.TabIndex = 20;
-            button3.Text = "Revisar Historial";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            richTextBox1.BackColor = SystemColors.InfoText;
+            richTextBox1.ForeColor = Color.White;
+            richTextBox1.Location = new Point(247, 356);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new Size(789, 274);
+            richTextBox1.TabIndex = 18;
+            richTextBox1.Text = "";
+            richTextBox1.TextChanged += richTextBox1_TextChanged;
             // 
             // EspcT
             // 

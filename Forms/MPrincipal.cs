@@ -22,10 +22,11 @@ namespace ProyectoDS_IS.Forms
             flowLayoutPanel1.Controls.Clear();
 
             string json = await ApiService.Instance.cargarCursos(ApiService.Instance.idUsuario);
+            Debug.WriteLine(json);
 
             JsonDocument doc = JsonDocument.Parse(json);
 
-            JsonElement cursos = doc.RootElement.GetProperty("courses");
+            JsonElement cursos = doc.RootElement.GetProperty("cursos");
 
             bool success = doc.RootElement.GetProperty("success").GetBoolean();
 

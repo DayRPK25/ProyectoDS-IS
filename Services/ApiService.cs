@@ -1,18 +1,20 @@
-﻿using System;
+﻿using SistemaEntregas.Auth;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text;
 using System.Text.Json;
-using SistemaEntregas.Auth;
+using System.Threading.Tasks;
 
 namespace ProyectoDS_IS.Services
 {
     internal class ApiService
     {
         private readonly HttpClient client;
+        private readonly CookieContainer cookies;
         public static ApiService Instance = new ApiService();
         public string CurrentUser { get; set; }
         public string Token { get; set; }
@@ -21,7 +23,14 @@ namespace ProyectoDS_IS.Services
 
         public ApiService()
         {
-            client = new HttpClient();
+            cookies = new CookieContainer();
+
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                CookieContainer = cookies,
+                UseCookies = true
+            };
+            client = new HttpClient(handler);
 
             client.BaseAddress = new Uri("http://170.9.26.131:80");
         }
@@ -50,12 +59,11 @@ namespace ProyectoDS_IS.Services
             string nombre,
             string nombreUsuario,
             string contrasena,
-            string carnet,
             string rol = "Estudiante"
             
             )
         {
-            var data = new { correo = correo, nombre = nombre, nombreUsuario = nombreUsuario, contrasena = contrasena, rol = rol , carnet = carnet};
+            var data = new { correo = correo, nombre = nombre, nombreUsuario = nombreUsuario, contrasena = contrasena, rol = rol};
             string json = JsonSerializer.Serialize(data);
 
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -83,9 +91,8 @@ namespace ProyectoDS_IS.Services
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response =
-                await client.PostAsync(
-                    "api/cursos",
-                    content
+                await client.GetAsync(
+                    "api/cursos"
                     );
 
             response.EnsureSuccessStatusCode();

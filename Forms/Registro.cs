@@ -52,12 +52,7 @@ namespace ProyectoDS_IS.Forms
 
             //Carnet:
 
-            pattern = @"^\d{10}$";
-            if (!Regex.IsMatch(textBox3.Text, pattern, RegexOptions.IgnoreCase))
-            {
-                MessageBox.Show("El carnet debe contener 10 números.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+
 
 
 
@@ -70,7 +65,7 @@ namespace ProyectoDS_IS.Forms
                 return;
             }
             //-----------------------------------------------------------------------------------------------------------------------
-            string json = await ApiService.Instance.Registro(textBox2.Text, textBox5.Text, textBox1.Text, textBox4.Text, textBox3.Text);
+            string json = await ApiService.Instance.Registro(textBox2.Text, textBox5.Text, textBox1.Text, textBox4.Text);
             JsonDocument doc = JsonDocument.Parse(json);
             bool success = doc.RootElement.GetProperty("success").GetBoolean();
             string message = "";

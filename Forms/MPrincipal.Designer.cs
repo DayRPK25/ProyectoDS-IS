@@ -104,10 +104,10 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 14.75F, FontStyle.Bold);
+            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
             label2.Location = new Point(62, 20);
             label2.Name = "label2";
-            label2.Size = new Size(53, 28);
+            label2.Size = new Size(30, 15);
             label2.TabIndex = 0;
             label2.Text = "User";
             // 
