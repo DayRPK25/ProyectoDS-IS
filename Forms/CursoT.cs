@@ -1,4 +1,5 @@
 ﻿using ProyectoDS_IS.Models;
+using ProyectoDS_IS.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,15 +16,15 @@ namespace ProyectoDS_IS.Forms
     public partial class CursoT : Form
     {
 
-        private void CargarTareas(int idCurso, string nameCurso)
+        private async void CargarTareas(int idCurso, string nameCurso)
         {
             flowLayoutPanel1.Controls.Clear();
 
-            string json = ApiFake.Instance.GetTareas(idCurso);
+            string json = await ApiService.Instance.cargarTareas(idCurso);
 
             JsonDocument doc = JsonDocument.Parse(json);
 
-            JsonElement tareas = doc.RootElement.GetProperty("tasks");
+            JsonElement tareas = doc.RootElement.GetProperty("tareas");
 
             bool success = doc.RootElement.GetProperty("success").GetBoolean();
 
@@ -35,10 +36,10 @@ namespace ProyectoDS_IS.Forms
 
             foreach (JsonElement tarea in tareas.EnumerateArray())
             {
-                string titulo = tarea.GetProperty("title").GetString();
-                string fechaC = tarea.GetProperty("createdAt").GetString();
-                string fechaE = tarea.GetProperty("dueDate").GetString();
-                string instr = tarea.GetProperty("instructions").GetString();
+                string titulo = tarea.GetProperty("nombreTarea").GetString();
+                string fechaC = tarea.GetProperty("fechaCreacion").GetString();
+                string fechaE = tarea.GetProperty("fechaEntrega").GetString();
+                string instr = tarea.GetProperty("descripcion").GetString();
 
 
 
@@ -70,11 +71,11 @@ namespace ProyectoDS_IS.Forms
                 btnVer.Height = 30;
                 btnVer.Location = new Point(tarjeta.Width - 100, 55);
 
-                int idTarea = tarea.GetProperty("id").GetInt32();
+                string idTarea = tarea.GetProperty("id").GetString();
 
                 btnVer.Click += (sender, e) =>
                 {
-                    EspcT espcT = new EspcT(titulo, nameCurso, fechaC, fechaE, instr);
+                    EspcT espcT = new EspcT(titulo, nameCurso, fechaC, fechaE, instr, idTarea);
                     espcT.Show();
                     this.Hide();
                 };

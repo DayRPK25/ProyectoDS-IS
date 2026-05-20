@@ -99,6 +99,24 @@ namespace ProyectoDS_IS.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> cargarTareas
+            (
+            int idCurso
+
+            )
+        {
+            //var data = new { idUsuario = idUsuario, };
+            //string json = JsonSerializer.Serialize(data);
+
+            //StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response =
+                await client.GetAsync($"api/tareas?idCurso={idCurso}");
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
 
     }
 }

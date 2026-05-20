@@ -13,7 +13,7 @@ namespace ProyectoDS_IS.Forms
 {
     public partial class EspcT : Form
     {
-        public EspcT(string titulo, string nomCurso, string fechaC, string fechaE, string instrucciones)
+        public EspcT(string titulo, string nomCurso, string fechaC, string fechaE, string instrucciones, string idTarea)
         {
             InitializeComponent();
             label1.Text = ApiFake.Instance.CurrentUser;
