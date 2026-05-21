@@ -173,24 +173,48 @@ namespace ProyectoDS_IS.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> crearEntrega(int idArchivoP, string fechaCreacion, int idTarea,  string nota, string comentarioProfesor, int version = 1, string idGrupoTrabajo = "1")
-        {
-            var data = new { idArchivoP = idArchivoP, fechaCreacion = fechaCreacion,   idGrupoTrabajo = idGrupoTrabajo, idTarea = idTarea, nota = nota, comentarioProfesor = comentarioProfesor, version = version };
-            string json = JsonSerializer.Serialize(data);
+        public async Task<string> crearEntrega(
+            int idArchivoP,
+            string fechaCreacion,
+            int idTarea,
+            string nota,
+            string comentarioProfesor,
+            int version = 1,
+            string idGrupoTrabajo = "1"
+        )
+                {
+                    var data = new
+                    {
+                        idGrupoTrabajo,
+                        idTarea,
+                        idArchivoP,
+                        fechaCreacion,
+                        version,
+                        nota,
+                        comentarioProfesor
+                    };
 
-            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    string json = JsonSerializer.Serialize(data);
 
-            HttpResponseMessage response =
-                await client.PostAsync(
-                    "api/tareas/entregar",
-                    content
+                    StringContent content = new StringContent(
+                        json,
+                        Encoding.UTF8,
+                        "application/json"
                     );
 
-            string body = await response.Content.ReadAsStringAsync();
+                    HttpResponseMessage response = await client.PostAsync(
+                        "api/tareas/entregar",
+                        content
+                    );
 
-            MessageBox.Show(body);
+                    string body = await response.Content.ReadAsStringAsync();
 
-            return body;
-        }
-    }
+                    if (string.IsNullOrWhiteSpace(body))
+                    {
+                        body = $"{{\"success\":false,\"error\":\"Respuesta vacía del servidor. Status: {(int)response.StatusCode} {response.StatusCode}\"}}";
+                    }
+
+                    return body;
+                }
+            }
 }
