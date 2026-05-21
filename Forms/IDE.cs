@@ -242,9 +242,11 @@ namespace ProyectoDS_IS
                     string nombreArchivo = Path.GetFileName(saveFile.FileName);
                     DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
                     DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
+                    string fechaCreacionF = fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss");
+                    string fechaModificacionF = fechaModificacion.ToString("yyyy-MM-dd HH:mm:ss");
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
+                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaModificacionF, firma);
                 }
             }
             try
@@ -315,9 +317,11 @@ namespace ProyectoDS_IS
                     string nombreArchivo = Path.GetFileName(saveFile.FileName);
                     DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
                     DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
+                    string fechaCreacionF = fechaCreacion.ToString(("yyyy-MM-dd HH:mm:ss"));
+                    string fechaModificacionF = fechaModificacion.ToString(("yyyy-MM-dd HH:mm:ss"));
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
+                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaModificacionF, firma);
                 }
             }
             else

@@ -118,7 +118,7 @@ namespace ProyectoDS_IS.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> guardarArchivoP(string nombreArchivoP, string ruta, string contenido, DateTime fechaCreacion, DateTime fechaModificacion, string firma )
+        public async Task<string> guardarArchivoP(string nombreArchivoP, string ruta, string contenido, string fechaCreacion, string fechaModificacion, string firma )
         {
             var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido,  fechaCreacion = fechaCreacion, fechaModificacion = fechaModificacion, firma = firma };
             string json = JsonSerializer.Serialize(data);
