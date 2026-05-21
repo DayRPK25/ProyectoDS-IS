@@ -1,5 +1,6 @@
 ﻿using ProyectoDS_IS.Forms;
 using ProyectoDS_IS.Models;
+using ProyectoDS_IS.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -221,7 +222,7 @@ namespace ProyectoDS_IS
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private async void toolStripButton1_Click(object sender, EventArgs e)
         {
             if (guardado == false)
             {
@@ -243,7 +244,7 @@ namespace ProyectoDS_IS
                     DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    ApiFake.Instance.SaveArchivo(ApiFake.Instance.CurrentUser,nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
+                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
                 }
             }
             try
@@ -294,7 +295,7 @@ namespace ProyectoDS_IS
 
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        private async void toolStripButton2_Click(object sender, EventArgs e)
         {
             if (guardado == false)
             {
@@ -316,23 +317,24 @@ namespace ProyectoDS_IS
                     DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    ApiFake.Instance.SaveArchivo(ApiFake.Instance.CurrentUser, nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
+                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacion, fechaModificacion, firma);
                 }
             }
             else
             {
+                DateTime fechaModificacionActual = File.GetLastWriteTime(ruta_archivo);
                 File.WriteAllText(ruta_archivo, fastColoredTextBox1.Text);
-                string nombreArchivo = Path.GetFileName(ruta_archivo);
+                string nombreArchivoP = Path.GetFileName(ruta_archivo);
                 DateTime fechaCreacion = File.GetCreationTime(ruta_archivo);
-                DateTime fechaModificacion = File.GetLastWriteTime(ruta_archivo);
+                DateTime fechaModificacionNueva = File.GetLastWriteTime(ruta_archivo);
                 string firma = CalcularSHA256(ruta_archivo);
                 string contenido = File.ReadAllText(ruta_archivo);
-                ApiFake.Instance.UpdateArchivo(ApiFake.Instance.CurrentUser, idArchivo, contenido, fechaModificacion, firma);
+                await ApiService.Instance.actualizarArchivoP(nombreArchivoP, ruta_archivo, contenido, fechaModificacionActual, fechaCreacion, fechaModificacionNueva, firma);
             }
 
         }
 
-        private void abrirArchivoToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void abrirArchivoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Abrir archivo";
@@ -344,9 +346,8 @@ namespace ProyectoDS_IS
                 if (Path.GetExtension(openFileDialog.FileName) == ".py")
                 {
                     string firma = CalcularSHA256(openFileDialog.FileName);
-                    string json = ApiFake.Instance.VerifyArchivo(
-                        ApiFake.Instance.CurrentUser, Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName), File.GetLastWriteTime(openFileDialog.FileName), firma
-
+                    string json = await ApiService.Instance.verificarArchivoP(
+                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName), File.GetLastWriteTime(openFileDialog.FileName), firma
                      );
 
                     JsonDocument doc = JsonDocument.Parse(json);
@@ -414,7 +415,7 @@ namespace ProyectoDS_IS
             }
         }
 
-        private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private async void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             string ruta = e.Node.Tag.ToString();
 
@@ -423,8 +424,8 @@ namespace ProyectoDS_IS
                 if (Path.GetExtension(ruta) == ".py")
                 {
                     string firma = CalcularSHA256(ruta);
-                    string json = ApiFake.Instance.VerifyArchivo(
-                        ApiFake.Instance.CurrentUser, Path.GetFileName(ruta), File.GetCreationTime(ruta), File.GetLastWriteTime(ruta), firma
+                    string json = await ApiService.Instance.verificarArchivoP(
+                        Path.GetFileName(ruta), File.GetCreationTime(ruta), File.GetLastWriteTime(ruta), firma
 
                      );
 

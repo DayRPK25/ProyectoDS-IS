@@ -84,7 +84,6 @@
             fastColoredTextBox1.Dock = DockStyle.Fill;
             fastColoredTextBox1.Font = new Font("Courier New", 9.75F);
             fastColoredTextBox1.ForeColor = SystemColors.ControlText;
-            fastColoredTextBox1.Hotkeys = resources.GetString("fastColoredTextBox1.Hotkeys");
             fastColoredTextBox1.IsReplaceMode = false;
             fastColoredTextBox1.Location = new Point(0, 0);
             fastColoredTextBox1.Name = "fastColoredTextBox1";

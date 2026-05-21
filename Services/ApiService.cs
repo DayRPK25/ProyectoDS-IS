@@ -8,6 +8,7 @@ using System.Text;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProyectoDS_IS.Services
 {
@@ -117,6 +118,56 @@ namespace ProyectoDS_IS.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> guardarArchivoP(string nombreArchivoP, string ruta, string contenido, DateTime fechaCreacion, DateTime fechaModificacion, string firma )
+        {
+            var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido,  fechaCreacion = fechaCreacion, fechaModificacion = fechaModificacion, firma = firma };
+            string json = JsonSerializer.Serialize(data);
 
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response =
+                await client.PostAsync(
+                    "api/archivop/guardar",
+                    content
+                    );
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> actualizarArchivoP(string nombreArchivoP, string ruta, string contenido, DateTime fechaModificacionActual, DateTime fechaCreacion, DateTime fechaModificacionNueva, string firma)
+        {
+            var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido, fechaModificacionNueva = fechaModificacionNueva, fechaCreacion = fechaCreacion, fechaModificacionActual = fechaModificacionActual, firma = firma };
+            string json = JsonSerializer.Serialize(data);
+
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response =
+                await client.PostAsync(
+                    "api/archivop/actualizar",
+                    content
+                    );
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        //
+
+        public async Task<string> verificarArchivoP(string nombreArchivoP, DateTime fechaCreacion, DateTime fechaModificacion, string firma)
+        {
+            var data = new { nombreArchivoP = nombreArchivoP, fechaCreacion = fechaCreacion, fechaModificacion = fechaModificacion, firma = firma };
+            string json = JsonSerializer.Serialize(data);
+
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response =
+                await client.PostAsync(
+                    "api/archivop/verificar",
+                    content
+                    );
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
     }
 }
