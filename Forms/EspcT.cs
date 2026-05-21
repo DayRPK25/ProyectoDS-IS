@@ -139,7 +139,7 @@ namespace ProyectoDS_IS.Forms
                         return;
                     }
                     int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
-                    MessageBox.Show(idArchivoP.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(idTarea2.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     string ruta_archivo = openFileDialog.FileName;
                     string fechaCreacion = File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss");
 
