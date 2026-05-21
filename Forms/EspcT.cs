@@ -126,7 +126,7 @@ namespace ProyectoDS_IS.Forms
                 {
                     string firma = CalcularSHA256(openFileDialog.FileName);
                     string json = await ApiService.Instance.verificarArchivoP(
-                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName), File.GetLastWriteTime(openFileDialog.FileName), firma
+                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), File.GetLastWriteTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), firma
                      );
 
                     JsonDocument doc = JsonDocument.Parse(json);

@@ -131,11 +131,14 @@ namespace ProyectoDS_IS.Services
                     content
                     );
 
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            string body = await response.Content.ReadAsStringAsync();
+
+            MessageBox.Show(body);
+
+            return body;
         }
 
-        public async Task<string> actualizarArchivoP(string nombreArchivoP, string ruta, string contenido, DateTime fechaModificacionActual, DateTime fechaCreacion, DateTime fechaModificacionNueva, string firma)
+        public async Task<string> actualizarArchivoP(string nombreArchivoP, string ruta, string contenido, string fechaModificacionActual, string fechaCreacion, string fechaModificacionNueva, string firma)
         {
             var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido, fechaModificacionNueva = fechaModificacionNueva, fechaCreacion = fechaCreacion, fechaModificacionActual = fechaModificacionActual, firma = firma };
             string json = JsonSerializer.Serialize(data);
@@ -153,7 +156,7 @@ namespace ProyectoDS_IS.Services
         }
         //
 
-        public async Task<string> verificarArchivoP(string nombreArchivoP, DateTime fechaCreacion, DateTime fechaModificacion, string firma)
+        public async Task<string> verificarArchivoP(string nombreArchivoP, string fechaCreacion, string fechaModificacion, string firma)
         {
             var data = new { nombreArchivoP = nombreArchivoP, fechaCreacion = fechaCreacion, fechaModificacion = fechaModificacion, firma = firma };
             string json = JsonSerializer.Serialize(data);

@@ -224,51 +224,86 @@ namespace ProyectoDS_IS
 
         private async void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if (guardado == false)
-            {
-                SaveFileDialog saveFile = new SaveFileDialog();
-
-                saveFile.Title = "Guardar";
-                saveFile.Filter = "Archivo Python (*.py)|*.py|Texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*";
-                saveFile.DefaultExt = ".py";
-                saveFile.FileName = "Default1.py";
-
-                if (saveFile.ShowDialog() == DialogResult.OK)
-                {
-                    File.WriteAllText(saveFile.FileName, fastColoredTextBox1.Text);
-                    richTextBox1.AppendText("Archivo guardado en:\n" + saveFile.FileName + "\n");
-                    guardado = true;
-                    ruta_archivo = saveFile.FileName;
-                    string nombreArchivo = Path.GetFileName(saveFile.FileName);
-                    DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
-                    DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
-                    string fechaCreacionF = fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss");
-                    string fechaModificacionF = fechaModificacion.ToString("yyyy-MM-dd HH:mm:ss");
-                    string firma = CalcularSHA256(saveFile.FileName);
-                    string contenido = File.ReadAllText(ruta_archivo);
-                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaModificacionF, firma);
-                }
-            }
             try
             {
+                if (guardado == false)
+                {
+                    SaveFileDialog saveFile = new SaveFileDialog();
+
+                    saveFile.Title = "Guardar";
+                    saveFile.Filter = "Archivo Python (*.py)|*.py|Texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*";
+                    saveFile.DefaultExt = ".py";
+                    saveFile.FileName = "Default1.py";
+
+                    if (saveFile.ShowDialog() == DialogResult.OK)
+                    {
+                        File.WriteAllText(saveFile.FileName, fastColoredTextBox1.Text);
+
+                        richTextBox1.AppendText(
+                            "Archivo guardado en:\n" + saveFile.FileName + "\n"
+                        );
+
+                        guardado = true;
+                        ruta_archivo = saveFile.FileName;
+
+                        string nombreArchivo = Path.GetFileName(saveFile.FileName);
+
+                        DateTime fechaCreacion =
+                            File.GetCreationTime(saveFile.FileName);
+
+
+
+                        string fechaCreacionF =
+                            fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+
+                        string firma = CalcularSHA256(saveFile.FileName);
+
+                        string contenido =
+                            File.ReadAllText(ruta_archivo);
+
+                        string respuesta =
+                            await ApiService.Instance.guardarArchivoP(
+                                nombreArchivo,
+                                saveFile.FileName,
+                                contenido,
+                                fechaCreacionF,
+                                fechaCreacionF,
+                                firma
+                            );
+
+                        MessageBox.Show(
+                            respuesta,
+                            "Respuesta backend"
+                        );
+                    }
+                }
+
                 richTextBox1.Clear();
 
                 File.WriteAllText(ruta_archivo, fastColoredTextBox1.Text);
 
                 ProcessStartInfo psi = new ProcessStartInfo();
+
                 psi.FileName = "python";
                 psi.Arguments = $"\"{ruta_archivo}\"";
+
                 psi.RedirectStandardOutput = true;
                 psi.RedirectStandardError = true;
                 psi.UseShellExecute = false;
                 psi.CreateNoWindow = true;
 
                 Process proceso = new Process();
+
                 proceso.StartInfo = psi;
                 proceso.Start();
 
-                string salida = proceso.StandardOutput.ReadToEnd();
-                string errores = proceso.StandardError.ReadToEnd();
+                string salida =
+                    proceso.StandardOutput.ReadToEnd();
+
+                string errores =
+                    proceso.StandardError.ReadToEnd();
 
                 proceso.WaitForExit();
 
@@ -278,7 +313,10 @@ namespace ProyectoDS_IS
             }
             catch (Exception ex)
             {
-                richTextBox1.Text = "Error: " + ex.Message;
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Error completo"
+                );
             }
         }
 
@@ -318,10 +356,9 @@ namespace ProyectoDS_IS
                     DateTime fechaCreacion = File.GetCreationTime(saveFile.FileName);
                     DateTime fechaModificacion = File.GetLastWriteTime(saveFile.FileName);
                     string fechaCreacionF = fechaCreacion.ToString(("yyyy-MM-dd HH:mm:ss"));
-                    string fechaModificacionF = fechaModificacion.ToString(("yyyy-MM-dd HH:mm:ss"));
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaModificacionF, firma);
+                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaCreacionF, firma);
                 }
             }
             else
@@ -331,9 +368,12 @@ namespace ProyectoDS_IS
                 string nombreArchivoP = Path.GetFileName(ruta_archivo);
                 DateTime fechaCreacion = File.GetCreationTime(ruta_archivo);
                 DateTime fechaModificacionNueva = File.GetLastWriteTime(ruta_archivo);
+                string fechaCreacionF = fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss");
+                string fechaModificacionActualF = fechaModificacionActual.ToString("yyyy-MM-dd HH:mm:ss");
+                string fechaModificacionNuevaF = fechaModificacionNueva.ToString("yyyy-MM-dd HH:mm:ss");
                 string firma = CalcularSHA256(ruta_archivo);
                 string contenido = File.ReadAllText(ruta_archivo);
-                await ApiService.Instance.actualizarArchivoP(nombreArchivoP, ruta_archivo, contenido, fechaModificacionActual, fechaCreacion, fechaModificacionNueva, firma);
+                await ApiService.Instance.actualizarArchivoP(nombreArchivoP, ruta_archivo, contenido, fechaModificacionActualF, fechaCreacionF, fechaModificacionNuevaF, firma);
             }
 
         }
@@ -351,7 +391,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(openFileDialog.FileName);
                     string json = await ApiService.Instance.verificarArchivoP(
-                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName), File.GetLastWriteTime(openFileDialog.FileName), firma
+                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), File.GetLastWriteTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), firma
                      );
 
                     JsonDocument doc = JsonDocument.Parse(json);
@@ -430,7 +470,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(ruta);
                     string json = await ApiService.Instance.verificarArchivoP(
-                        Path.GetFileName(ruta), File.GetCreationTime(ruta), File.GetLastWriteTime(ruta), firma
+                        Path.GetFileName(ruta), File.GetCreationTime(ruta).ToString("yyyy-MM-dd HH:mm:ss"), File.GetLastWriteTime(ruta).ToString("yyyy-MM-dd HH:mm:ss"), firma
 
                      );
 
