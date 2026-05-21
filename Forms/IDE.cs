@@ -272,11 +272,14 @@ namespace ProyectoDS_IS
                                 fechaCreacionF,
                                 firma
                             );
-
-                        MessageBox.Show(
-                            respuesta,
-                            "Respuesta backend"
-                        );
+                        JsonDocument doc = JsonDocument.Parse(respuesta);
+                        bool success = doc.RootElement.GetProperty("success").GetBoolean();
+                        if (!success)
+                        {
+                            string message = doc.RootElement.GetProperty("error").GetString();
+                            MessageBox.Show("No se pudo guardar el archivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
                     }
                 }
 
@@ -358,7 +361,15 @@ namespace ProyectoDS_IS
                     string fechaCreacionF = fechaCreacion.ToString(("yyyy-MM-dd HH:mm:ss"));
                     string firma = CalcularSHA256(saveFile.FileName);
                     string contenido = File.ReadAllText(ruta_archivo);
-                    await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaCreacionF, firma);
+                    string respuesta = await ApiService.Instance.guardarArchivoP(nombreArchivo, saveFile.FileName, contenido, fechaCreacionF, fechaCreacionF, firma);
+                    JsonDocument doc = JsonDocument.Parse(respuesta);
+                    bool success = doc.RootElement.GetProperty("success").GetBoolean();
+                    if (!success)
+                    {
+                        string message = doc.RootElement.GetProperty("error").GetString();
+                        MessageBox.Show("No se pudo guardar el archivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                 }
             }
             else
@@ -373,7 +384,15 @@ namespace ProyectoDS_IS
                 string fechaModificacionNuevaF = fechaModificacionNueva.ToString("yyyy-MM-dd HH:mm:ss");
                 string firma = CalcularSHA256(ruta_archivo);
                 string contenido = File.ReadAllText(ruta_archivo);
-                await ApiService.Instance.actualizarArchivoP(nombreArchivoP, ruta_archivo, contenido, fechaModificacionActualF, fechaCreacionF, fechaModificacionNuevaF, firma);
+                string respuesta = await ApiService.Instance.actualizarArchivoP(nombreArchivoP, ruta_archivo, contenido, fechaModificacionNuevaF, firma);
+                JsonDocument doc = JsonDocument.Parse(respuesta);
+                bool success = doc.RootElement.GetProperty("success").GetBoolean();
+                if (!success)
+                {
+                    string message = doc.RootElement.GetProperty("error").GetString();
+                    MessageBox.Show("No se pudo actualizar el archivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
             }
 
         }
@@ -391,7 +410,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(openFileDialog.FileName);
                     string json = await ApiService.Instance.verificarArchivoP(
-                         Path.GetFileName(openFileDialog.FileName), File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), File.GetLastWriteTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss"), firma
+                         Path.GetFileName(openFileDialog.FileName), firma
                      );
 
                     JsonDocument doc = JsonDocument.Parse(json);
@@ -470,7 +489,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(ruta);
                     string json = await ApiService.Instance.verificarArchivoP(
-                        Path.GetFileName(ruta), File.GetCreationTime(ruta).ToString("yyyy-MM-dd HH:mm:ss"), File.GetLastWriteTime(ruta).ToString("yyyy-MM-dd HH:mm:ss"), firma
+                        Path.GetFileName(ruta), firma
 
                      );
 

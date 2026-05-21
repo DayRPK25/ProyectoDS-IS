@@ -131,16 +131,16 @@ namespace ProyectoDS_IS.Services
                     content
                     );
 
-            string body = await response.Content.ReadAsStringAsync();
+            
 
-            MessageBox.Show(body);
+            
 
-            return body;
+            return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> actualizarArchivoP(string nombreArchivoP, string ruta, string contenido, string fechaModificacionActual, string fechaCreacion, string fechaModificacionNueva, string firma)
+        public async Task<string> actualizarArchivoP(string nombreArchivoP, string ruta, string contenido, string fechaModificacionNueva, string firma)
         {
-            var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido, fechaModificacionNueva = fechaModificacionNueva, fechaCreacion = fechaCreacion, fechaModificacionActual = fechaModificacionActual, firma = firma };
+            var data = new { nombreArchivoP = nombreArchivoP, ruta = ruta, contenido = contenido, fechaModificacionNueva = fechaModificacionNueva, firma = firma };
             string json = JsonSerializer.Serialize(data);
 
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -151,14 +151,14 @@ namespace ProyectoDS_IS.Services
                     content
                     );
 
-            response.EnsureSuccessStatusCode();
+            
             return await response.Content.ReadAsStringAsync();
         }
         //
 
-        public async Task<string> verificarArchivoP(string nombreArchivoP, string fechaCreacion, string fechaModificacion, string firma)
+        public async Task<string> verificarArchivoP(string nombreArchivoP, string firma)
         {
-            var data = new { nombreArchivoP = nombreArchivoP, fechaCreacion = fechaCreacion, fechaModificacion = fechaModificacion, firma = firma };
+            var data = new { nombreArchivoP = nombreArchivoP,  firma = firma };
             string json = JsonSerializer.Serialize(data);
 
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -169,7 +169,7 @@ namespace ProyectoDS_IS.Services
                     content
                     );
 
-            response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsStringAsync();
         }
 
