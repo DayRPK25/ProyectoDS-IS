@@ -139,9 +139,27 @@ namespace ProyectoDS_IS.Forms
                         return;
                     }
                     int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
+                    MessageBox.Show(idArchivoP.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     string ruta_archivo = openFileDialog.FileName;
+                    string fechaCreacion = File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss");
 
-                    json = await ApiService.Instance.crearEntrega(idArchivoP, File.GetCreationTime(openFileDialog.FileName), Path.GetFileName(openFileDialog.FileName), firma, openFileDialog.FileName, idTarea2, "20", "Nice");
+                    json = await ApiService.Instance.crearEntrega(
+                        idArchivoP,
+                        fechaCreacion,
+                        idTarea2,
+                        "20",
+                        "Nice"
+                    );
+
+                    if (string.IsNullOrWhiteSpace(json))
+                    {
+                        MessageBox.Show("El backend no devolvió respuesta.", "Error");
+                        return;
+                    }
+
+                    MessageBox.Show(json, "Respuesta crearEntrega");
+
+                    doc = JsonDocument.Parse(json);
                     doc = JsonDocument.Parse(json);
                     success = doc.RootElement.GetProperty("success").GetBoolean();
 

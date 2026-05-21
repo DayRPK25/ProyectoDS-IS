@@ -173,21 +173,24 @@ namespace ProyectoDS_IS.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> crearEntrega(int idArchivoP, DateTime fechaCreacion, string nombreArchivoP, string firma, string ruta, int idTarea,  string nota, string comentarioProfesor, int version = 1, string idGrupoTrabajo = "1")
+        public async Task<string> crearEntrega(int idArchivoP, string fechaCreacion, int idTarea,  string nota, string comentarioProfesor, int version = 1, string idGrupoTrabajo = "1")
         {
-            var data = new { idArchivoP = idArchivoP, fechaCreacion = fechaCreacion,  nombreArchivoP = nombreArchivoP, firma = firma, ruta = ruta, idGrupoTrabajo = idGrupoTrabajo, idTarea = idTarea, nota = nota, comentarioProfesor = comentarioProfesor, version = version };
+            var data = new { idArchivoP = idArchivoP, fechaCreacion = fechaCreacion,   idGrupoTrabajo = idGrupoTrabajo, idTarea = idTarea, nota = nota, comentarioProfesor = comentarioProfesor, version = version };
             string json = JsonSerializer.Serialize(data);
 
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response =
                 await client.PostAsync(
-                    "api/entrega/crearEntrega",
+                    "api/tareas/entregar",
                     content
                     );
 
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            string body = await response.Content.ReadAsStringAsync();
+
+            MessageBox.Show(body);
+
+            return body;
         }
     }
 }
