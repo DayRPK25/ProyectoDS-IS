@@ -139,7 +139,6 @@ namespace ProyectoDS_IS.Forms
                         return;
                     }
                     int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
-                    MessageBox.Show(idTarea2.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     string ruta_archivo = openFileDialog.FileName;
                     string fechaCreacion = File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -157,7 +156,6 @@ namespace ProyectoDS_IS.Forms
                         return;
                     }
 
-                    MessageBox.Show(json, "Respuesta crearEntrega");
 
                     doc = JsonDocument.Parse(json);
                     doc = JsonDocument.Parse(json);
