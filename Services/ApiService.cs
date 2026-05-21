@@ -169,5 +169,22 @@ namespace ProyectoDS_IS.Services
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
+
+        public async Task<string> crearEntrega(string idArchivoP, DateTime fechaCreacion, string nombreArchivoP, string firma, string ruta, string idTarea,  string nota, string comentarioProfesor, int version = 1, string idGrupoTrabajo = "1")
+        {
+            var data = new { idArchivoP = idArchivoP, fechaCreacion = fechaCreacion,  nombreArchivoP = nombreArchivoP, firma = firma, ruta = ruta, idGrupoTrabajo = idGrupoTrabajo, idTarea = idTarea, nota = nota, comentarioProfesor = comentarioProfesor, version = version };
+            string json = JsonSerializer.Serialize(data);
+
+            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response =
+                await client.PostAsync(
+                    "api/entrega/crearEntrega",
+                    content
+                    );
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
     }
 }
