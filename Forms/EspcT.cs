@@ -19,7 +19,7 @@ namespace ProyectoDS_IS.Forms
 {
     public partial class EspcT : Form
     {
-        private string idTarea2;
+        private int idTarea2;
         private string CalcularSHA256(string rutaArchivo)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -30,7 +30,7 @@ namespace ProyectoDS_IS.Forms
             }
         }
 
-        public EspcT(string titulo, string nomCurso, string fechaC, string fechaE, string instrucciones, string idTarea)
+        public EspcT(string titulo, string nomCurso, string fechaC, string fechaE, string instrucciones, int idTarea)
         {
             InitializeComponent();
             label1.Text = ApiFake.Instance.CurrentUser;
@@ -137,15 +137,16 @@ namespace ProyectoDS_IS.Forms
                         MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
-                    string idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetString();
+                    int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
                     string ruta_archivo = openFileDialog.FileName;
                     
                     json= await ApiService.Instance.crearEntrega(idArchivoP, File.GetCreationTime(openFileDialog.FileName), Path.GetFileName(openFileDialog.FileName), firma, openFileDialog.FileName, idTarea2, "20", "Nice");
                     doc = JsonDocument.Parse(json);
                     success = doc.RootElement.GetProperty("success").GetBoolean();
-                    message = doc.RootElement.GetProperty("message").GetString();
+                    
                     if (!success)
                     {
+                        message = doc.RootElement.GetProperty("error").GetString();
                         MessageBox.Show("No se pudo entregar el archivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }

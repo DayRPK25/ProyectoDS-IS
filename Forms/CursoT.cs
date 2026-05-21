@@ -71,7 +71,7 @@ namespace ProyectoDS_IS.Forms
                 btnVer.Height = 30;
                 btnVer.Location = new Point(tarjeta.Width - 100, 55);
 
-                string idTarea = tarea.GetProperty("id").GetString();
+                int idTarea = tarea.GetProperty("idTarea").GetInt32();
 
                 btnVer.Click += (sender, e) =>
                 {
