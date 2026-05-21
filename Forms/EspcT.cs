@@ -131,19 +131,20 @@ namespace ProyectoDS_IS.Forms
 
                     JsonDocument doc = JsonDocument.Parse(json);
                     bool success = doc.RootElement.GetProperty("success").GetBoolean();
-                    string message = doc.RootElement.GetProperty("message").GetString();
+                    string message;
                     if (!success)
                     {
+                        message = doc.RootElement.GetProperty("error").GetString();
                         MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
                     int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
                     string ruta_archivo = openFileDialog.FileName;
-                    
-                    json= await ApiService.Instance.crearEntrega(idArchivoP, File.GetCreationTime(openFileDialog.FileName), Path.GetFileName(openFileDialog.FileName), firma, openFileDialog.FileName, idTarea2, "20", "Nice");
+
+                    json = await ApiService.Instance.crearEntrega(idArchivoP, File.GetCreationTime(openFileDialog.FileName), Path.GetFileName(openFileDialog.FileName), firma, openFileDialog.FileName, idTarea2, "20", "Nice");
                     doc = JsonDocument.Parse(json);
                     success = doc.RootElement.GetProperty("success").GetBoolean();
-                    
+
                     if (!success)
                     {
                         message = doc.RootElement.GetProperty("error").GetString();
@@ -169,6 +170,13 @@ namespace ProyectoDS_IS.Forms
         private void button3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MPrincipal principal = new MPrincipal();
+            principal.Show();
+            this.Hide();
         }
     }
 }
