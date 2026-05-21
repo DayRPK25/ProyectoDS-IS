@@ -356,9 +356,10 @@ namespace ProyectoDS_IS
 
                     JsonDocument doc = JsonDocument.Parse(json);
                     bool success = doc.RootElement.GetProperty("success").GetBoolean();
-                    string message = doc.RootElement.GetProperty("message").GetString();
+                    
                     if (!success)
                     {
+                        string message = doc.RootElement.GetProperty("error").GetString();
                         MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
