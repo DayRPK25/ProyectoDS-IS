@@ -140,7 +140,7 @@ namespace ProyectoDS_IS.Forms
                     }
                     int idArchivoP = doc.RootElement.GetProperty("idArchivoP").GetInt32();
                     string ruta_archivo = openFileDialog.FileName;
-                    string fechaCreacion = File.GetCreationTime(openFileDialog.FileName).ToString("yyyy-MM-dd HH:mm:ss");
+                    string fechaCreacion =DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                     json = await ApiService.Instance.crearEntrega(
                         idArchivoP,

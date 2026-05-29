@@ -60,7 +60,7 @@ namespace ProyectoDS_IS.Services
             string nombre,
             string nombreUsuario,
             string contrasena,
-            string rol = "Estudiante"
+            string rol = "ESTUDIANTE"
             
             )
         {
