@@ -419,7 +419,7 @@ namespace ProyectoDS_IS
                     if (!success)
                     {
                         string message = doc.RootElement.GetProperty("error").GetString();
-                        MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Este archivo fue editado fuera del IDE O NO FUE CREADO DENTRO DEL MISMO.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
                     fastColoredTextBox1.Text = File.ReadAllText(openFileDialog.FileName);
