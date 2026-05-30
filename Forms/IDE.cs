@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Microsoft.VisualBasic;
 
 
 
@@ -174,6 +175,22 @@ namespace ProyectoDS_IS
 
         bool guardado = false;
         string ruta_archivo = "";
+        string rutaProyectoActual = "";
+        private void CargarProyectoEnTreeView(string rutaProyecto)
+        {
+            treeView1.Nodes.Clear();
+
+            TreeNode nodoRaiz = new TreeNode(Path.GetFileName(rutaProyecto));
+            nodoRaiz.Tag = rutaProyecto;
+
+            CargarCarpeta(rutaProyecto, nodoRaiz);
+
+            treeView1.Nodes.Add(nodoRaiz);
+            nodoRaiz.Expand();
+
+            rutaProyectoActual = rutaProyecto;
+            directorioActual = rutaProyecto;
+        }
         public IDE()
         {
             InitializeComponent();
@@ -415,7 +432,7 @@ namespace ProyectoDS_IS
 
                     JsonDocument doc = JsonDocument.Parse(json);
                     bool success = doc.RootElement.GetProperty("success").GetBoolean();
-                    
+
                     if (!success)
                     {
                         string message = doc.RootElement.GetProperty("error").GetString();
@@ -463,19 +480,10 @@ namespace ProyectoDS_IS
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
             string documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             folderDialog.InitialDirectory = documents;
+
             if (folderDialog.ShowDialog() == DialogResult.OK)
             {
-                string carpeta = folderDialog.SelectedPath;
-
-                treeView1.Nodes.Clear();
-
-                TreeNode nodoRaiz = new TreeNode(Path.GetFileName(carpeta));
-                nodoRaiz.Tag = carpeta;
-
-                CargarCarpeta(carpeta, nodoRaiz);
-
-                treeView1.Nodes.Add(nodoRaiz);
-                nodoRaiz.Expand();
+                CargarProyectoEnTreeView(folderDialog.SelectedPath);
             }
         }
 
@@ -495,9 +503,9 @@ namespace ProyectoDS_IS
 
                     JsonDocument doc = JsonDocument.Parse(json);
                     bool success = doc.RootElement.GetProperty("success").GetBoolean();
-                    string message = doc.RootElement.GetProperty("message").GetString();
                     if (!success)
                     {
+                        string msg = doc.RootElement.GetProperty("error").GetString();
                         MessageBox.Show("Este archivo fue editado fuera del IDE.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
@@ -524,6 +532,176 @@ namespace ProyectoDS_IS
         private void archivoToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void crearProyectoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string nombreProyecto = Microsoft.VisualBasic.Interaction.InputBox(
+                "Ingrese el nombre del proyecto:",
+                "Crear proyecto",
+                "NuevoProyecto"
+            );
+
+            if (string.IsNullOrWhiteSpace(nombreProyecto))
+            {
+                MessageBox.Show("Debe ingresar un nombre para el proyecto.");
+                return;
+            }
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                if (nombreProyecto.Contains(c))
+                {
+                    MessageBox.Show("El nombre del proyecto contiene caracteres inválidos.");
+                    return;
+                }
+            }
+
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            folderDialog.Description = "Seleccione dónde guardar el proyecto";
+            folderDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                string rutaProyecto = Path.Combine(folderDialog.SelectedPath, nombreProyecto);
+
+                if (Directory.Exists(rutaProyecto))
+                {
+                    MessageBox.Show("Ya existe una carpeta con ese nombre.");
+                    return;
+                }
+
+                Directory.CreateDirectory(rutaProyecto);
+
+                CargarProyectoEnTreeView(rutaProyecto);
+
+                richTextBox1.Clear();
+                MostrarPrompt();
+
+                MessageBox.Show("Proyecto creado correctamente.");
+            }
+        }
+
+        private async void crearArchivoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(rutaProyectoActual))
+            {
+                MessageBox.Show("Primero debe abrir o crear un proyecto.");
+                return;
+            }
+
+            TreeNode nodoSeleccionado = treeView1.SelectedNode;
+
+            if (nodoSeleccionado == null)
+            {
+                MessageBox.Show("Seleccione una carpeta dentro del proyecto.");
+                return;
+            }
+
+            string rutaSeleccionada = nodoSeleccionado.Tag.ToString();
+            string carpetaDestino;
+
+            if (Directory.Exists(rutaSeleccionada))
+            {
+                carpetaDestino = rutaSeleccionada;
+            }
+            else
+            {
+                carpetaDestino = Path.GetDirectoryName(rutaSeleccionada);
+            }
+
+            string nombreArchivo = Microsoft.VisualBasic.Interaction.InputBox(
+                "Ingrese el nombre del archivo:",
+                "Crear archivo",
+                "main.py"
+            );
+
+            if (string.IsNullOrWhiteSpace(nombreArchivo))
+            {
+                MessageBox.Show("Debe ingresar un nombre para el archivo.");
+                return;
+            }
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                if (nombreArchivo.Contains(c))
+                {
+                    MessageBox.Show("El nombre del archivo contiene caracteres inválidos.");
+                    return;
+                }
+            }
+
+            if (Path.GetExtension(nombreArchivo) == "")
+            {
+                nombreArchivo += ".py";
+            }
+
+            if (Path.GetExtension(nombreArchivo).ToLower() != ".py")
+            {
+                MessageBox.Show("Solo se pueden crear archivos .py");
+                return;
+            }
+
+            string rutaArchivoNuevo = Path.Combine(carpetaDestino, nombreArchivo);
+
+            if (File.Exists(rutaArchivoNuevo))
+            {
+                MessageBox.Show("Ya existe un archivo con ese nombre.");
+                return;
+            }
+
+            File.WriteAllText(rutaArchivoNuevo, "");
+            string nombreArchivoP = Path.GetFileName(rutaArchivoNuevo);
+
+            DateTime fechaCreacion = File.GetCreationTime(rutaArchivoNuevo);
+            DateTime fechaModificacion = File.GetLastWriteTime(rutaArchivoNuevo);
+
+            string fechaCreacionF = fechaCreacion.ToString("yyyy-MM-dd HH:mm:ss");
+            string fechaModificacionF = fechaModificacion.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string firma = CalcularSHA256(rutaArchivoNuevo);
+            string contenido = "";
+
+            string respuesta = await ApiService.Instance.guardarArchivoP(
+                nombreArchivoP,
+                rutaArchivoNuevo,
+                contenido,
+                fechaCreacionF,
+                fechaModificacionF,
+                firma
+            );
+
+            JsonDocument doc = JsonDocument.Parse(respuesta);
+            bool success = doc.RootElement.GetProperty("success").GetBoolean();
+
+            if (!success)
+            {
+                string error = "";
+
+                if (doc.RootElement.TryGetProperty("error", out JsonElement errorElement))
+                {
+                    error = errorElement.GetString();
+                }
+
+                MessageBox.Show(
+                    "No se pudo registrar el archivo en la base de datos.\n" + error,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+
+                File.Delete(rutaArchivoNuevo);
+                return;
+            }
+
+            CargarProyectoEnTreeView(rutaProyectoActual);
+
+            fastColoredTextBox1.Text = "";
+            label1.Text = nombreArchivo;
+            guardado = true;
+            ruta_archivo = rutaArchivoNuevo;
+
+            MessageBox.Show("Archivo creado correctamente.");
         }
     }
 }

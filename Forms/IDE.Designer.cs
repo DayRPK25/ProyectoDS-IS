@@ -47,6 +47,8 @@
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
             treeView1 = new TreeView();
+            crearProyectoToolStripMenuItem = new ToolStripMenuItem();
+            crearArchivoToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)fastColoredTextBox1).BeginInit();
             menuStrip2.SuspendLayout();
             toolStrip1.SuspendLayout();
@@ -82,7 +84,6 @@
             fastColoredTextBox1.CharWidth = 8;
             fastColoredTextBox1.DisabledColor = Color.FromArgb(100, 180, 180, 180);
             fastColoredTextBox1.Dock = DockStyle.Fill;
-            fastColoredTextBox1.Font = new Font("Courier New", 9.75F);
             fastColoredTextBox1.ForeColor = SystemColors.ControlText;
             fastColoredTextBox1.IsReplaceMode = false;
             fastColoredTextBox1.Location = new Point(0, 0);
@@ -111,7 +112,7 @@
             // 
             // archivoToolStripMenuItem
             // 
-            archivoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { abrirArchivoToolStripMenuItem, abrirCarpetaToolStripMenuItem });
+            archivoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { abrirArchivoToolStripMenuItem, abrirCarpetaToolStripMenuItem, crearProyectoToolStripMenuItem, crearArchivoToolStripMenuItem });
             archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
             archivoToolStripMenuItem.Size = new Size(60, 20);
             archivoToolStripMenuItem.Text = "Archivo";
@@ -256,6 +257,20 @@
             treeView1.TabIndex = 0;
             treeView1.NodeMouseDoubleClick += treeView1_NodeMouseDoubleClick;
             // 
+            // crearProyectoToolStripMenuItem
+            // 
+            crearProyectoToolStripMenuItem.Name = "crearProyectoToolStripMenuItem";
+            crearProyectoToolStripMenuItem.Size = new Size(180, 22);
+            crearProyectoToolStripMenuItem.Text = "Crear Proyecto";
+            crearProyectoToolStripMenuItem.Click += crearProyectoToolStripMenuItem_Click;
+            // 
+            // crearArchivoToolStripMenuItem
+            // 
+            crearArchivoToolStripMenuItem.Name = "crearArchivoToolStripMenuItem";
+            crearArchivoToolStripMenuItem.Size = new Size(180, 22);
+            crearArchivoToolStripMenuItem.Text = "Crear Archivo";
+            crearArchivoToolStripMenuItem.Click += crearArchivoToolStripMenuItem_Click;
+            // 
             // IDE
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -306,5 +321,7 @@
         private TreeView treeView1;
         private ToolStripMenuItem abrirCarpetaToolStripMenuItem;
         private ToolStripLabel toolStripLabel1;
+        private ToolStripMenuItem crearProyectoToolStripMenuItem;
+        private ToolStripMenuItem crearArchivoToolStripMenuItem;
     }
 }
