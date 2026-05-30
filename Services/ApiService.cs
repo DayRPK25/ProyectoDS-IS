@@ -156,9 +156,9 @@ namespace ProyectoDS_IS.Services
         }
         //
 
-        public async Task<string> verificarArchivoP(string nombreArchivoP, string firma)
+        public async Task<string> verificarArchivoP(string nombreArchivoP, string firma, string ruta)
         {
-            var data = new { nombreArchivoP = nombreArchivoP,  firma = firma };
+            var data = new { nombreArchivoP = nombreArchivoP,  firma = firma, ruta = ruta };
             string json = JsonSerializer.Serialize(data);
 
             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");

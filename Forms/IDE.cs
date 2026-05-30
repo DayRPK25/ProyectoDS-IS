@@ -410,7 +410,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(openFileDialog.FileName);
                     string json = await ApiService.Instance.verificarArchivoP(
-                         Path.GetFileName(openFileDialog.FileName), firma
+                         Path.GetFileName(openFileDialog.FileName), firma, openFileDialog.FileName
                      );
 
                     JsonDocument doc = JsonDocument.Parse(json);
@@ -419,7 +419,7 @@ namespace ProyectoDS_IS
                     if (!success)
                     {
                         string message = doc.RootElement.GetProperty("error").GetString();
-                        MessageBox.Show("Este archivo fue editado fuera del IDE O NO FUE CREADO DENTRO DEL MISMO.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
                     fastColoredTextBox1.Text = File.ReadAllText(openFileDialog.FileName);
@@ -489,7 +489,7 @@ namespace ProyectoDS_IS
                 {
                     string firma = CalcularSHA256(ruta);
                     string json = await ApiService.Instance.verificarArchivoP(
-                        Path.GetFileName(ruta), firma
+                        Path.GetFileName(ruta), firma, ruta
 
                      );
 
