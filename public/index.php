@@ -140,14 +140,22 @@ $router->add('GET', '/api/tareas/{idTarea}/entregas', function (int $idTarea) {
 });
 
 // RUTAS que faltaban
-$router->add('GET', '/api/tareas/{idTarea}/grupos', function (int $idTarea) {});
+// Poner esto:
+$router->add('GET', '/api/tareas/{idTarea}/grupos', function (string $idTarea) {
+    (new GrupoController())->listar((int) $idTarea);
+});
 
-$router->add('POST', '/api/tareas/{idTarea}/grupos', function (int $idTarea) {});
+$router->add('POST', '/api/tareas/{idTarea}/grupos', function (string $idTarea) {
+    (new GrupoController())->crear((int) $idTarea);
+});
 
-$router->add('PUT', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (int $idTarea, int $idGrupo) {});
+$router->add('PUT', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (string $idTarea, string $idGrupo) {
+    (new GrupoController())->actualizar((int) $idTarea, (int) $idGrupo);
+});
 
-$router->add('DELETE', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (int $idTarea, int $idGrupo) {});
-
+$router->add('DELETE', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (string $idTarea, string $idGrupo) {
+    (new GrupoController())->eliminar((int) $idTarea, (int) $idGrupo);
+});
 
 $router->add('POST', '/api/archivos', function () {});
 
