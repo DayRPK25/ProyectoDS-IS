@@ -1,10 +1,11 @@
 <?php
 require_once __DIR__ . '/../model/GrupoModel.php';
-
+require_once __DIR__ . '/../model/UsuarioModel.php';
 
 class GrupoController
 {
     private GrupoModel $grupoModel;
+    private UsuarioModel $usuarioModel;
 
     public function __construct()
     {

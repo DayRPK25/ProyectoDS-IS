@@ -11,6 +11,16 @@ class UsuarioModel
         $this->pdo = Database::getInstance()->getConnection();
     }
 
+    public function buscarPorNombre(string $nombre): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM Usuario WHERE nombre = ?");
+        $stmt->execute([$nombre]);
+
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $usuario ?: null;
+    }
+
     public function buscarPorCorreo(string $correo): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM Usuario WHERE correo = ?");
