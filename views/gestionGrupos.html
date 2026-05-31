@@ -53,7 +53,6 @@
         }
 
         .nav-btn:hover { background-color: #4F378A; }
-        .nav-btn.activo { background-color: #4F378A; }
         .sidebar-espaciador { flex: 1; }
 
         .btn-cerrar-sesion {
@@ -71,21 +70,16 @@
             overflow-y: auto;
         }
 
-        .contenido-header {
-            margin-bottom: 20px;
-        }
-
+        .contenido-header { margin-bottom: 20px; }
         .contenido-header h2 { color: #fff; font-size: 1.3rem; font-weight: 600; }
         .contenido-header p { color: #BFB7CC; font-size: 0.82rem; margin-top: 4px; }
 
-        /* columnas: lista de grupos a la izq, detalle a la der */
         .layout-grupos {
             display: flex;
             gap: 16px;
             align-items: flex-start;
         }
 
-        /* panel izquierdo: lista de grupos */
         .panel-lista {
             width: 260px;
             flex-shrink: 0;
@@ -138,7 +132,6 @@
 
         .btn-nuevo-grupo:hover { background-color: #4F378A; }
 
-        /* panel derecho: detalle del grupo seleccionado */
         .panel-detalle {
             flex: 1;
             display: flex;
@@ -148,7 +141,6 @@
 
         .card-detalle { width: 100%; }
 
-        /* campo nombre del grupo */
         .campo-nombre-grupo {
             display: flex;
             align-items: center;
@@ -171,7 +163,6 @@
 
         .campo-nombre-grupo input:focus { box-shadow: 0 0 0 2px #6750A4; }
 
-        /* lista de miembros */
         .lista-miembros { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
 
         .fila-miembro {
@@ -196,36 +187,93 @@
 
         .sin-miembros { color: #6B6B6B; font-size: 0.82rem; padding: 4px 0; }
 
-        /* agregar miembro */
+        /* Buscador de estudiantes */
         .agregar-miembro {
             padding: 10px 16px 14px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
             border-top: 1px solid #BFB7CC;
         }
 
-        .agregar-miembro input {
-            flex: 1;
-            padding: 7px 10px;
+        .agregar-miembro-label {
+            font-size: 0.78rem;
+            color: #575757;
+            margin-bottom: 6px;
+        }
+
+        .buscador-wrap { position: relative; }
+
+        .buscador-wrap input {
+            width: 100%;
+            padding: 8px 10px;
             border: none; border-radius: 8px;
             background-color: #fff;
             font-size: 0.85rem; color: #1C1B1F;
             outline: none;
         }
 
-        .agregar-miembro input:focus { box-shadow: 0 0 0 2px #6750A4; }
+        .buscador-wrap input:focus { box-shadow: 0 0 0 2px #6750A4; }
 
-        .btn-agregar {
-            background-color: #34C759; color: #fff;
-            border: none; border-radius: 8px;
-            padding: 7px 16px; font-size: 0.82rem;
-            cursor: pointer; flex-shrink: 0;
+        .dropdown-estudiantes {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
         }
 
-        .btn-agregar:hover { background-color: #28a745; }
+        .dropdown-estudiantes.abierto { display: block; }
 
-        /* acciones del grupo */
+        .item-dropdown {
+            padding: 9px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .item-dropdown:last-child { border-bottom: none; }
+        .item-dropdown:hover:not(.ocupado) { background-color: #EADDFF; }
+
+        .item-dropdown.ocupado {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-info .item-nombre { font-size: 0.85rem; color: #1C1B1F; font-weight: 500; }
+        .item-info .item-sub { font-size: 0.72rem; color: #575757; }
+
+        .badge-ocupado {
+            font-size: 0.68rem;
+            background-color: #FF383C;
+            color: #fff;
+            border-radius: 10px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .badge-libre {
+            font-size: 0.68rem;
+            background-color: #34C759;
+            color: #fff;
+            border-radius: 10px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+        }
+
+        .dropdown-vacio {
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            color: #888;
+            text-align: center;
+        }
+
         .acciones-grupo {
             padding: 8px 16px 14px;
             display: flex;
@@ -257,19 +305,32 @@
 
         .btn-atras:hover { background-color: #1a53e0; }
 
-        .mensaje-ok { color: #34C759; font-size: 0.78rem; display: none; }
-        .mensaje-error { color: #FF383C; font-size: 0.78rem; display: none; }
-
-        /* estado vacio / cargando */
         .estado-info { color: #BFB7CC; font-size: 0.85rem; padding: 12px 16px; }
 
-        /* placeholder cuando no hay grupo seleccionado */
         .placeholder-detalle {
             color: #BFB7CC;
             font-size: 0.88rem;
             padding: 24px;
             text-align: center;
         }
+
+        .toast {
+            position: fixed;
+            bottom: 24px; left: 50%;
+            transform: translateX(-50%);
+            background-color: #323232;
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+            z-index: 100;
+        }
+
+        .toast.visible { opacity: 1; }
+        .toast.error { background-color: #c0392b; }
     </style>
 </head>
 <body>
@@ -284,12 +345,14 @@
             <span id="nombreUsuario">Usuario</span>
         </div>
 
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/crearTarea'">Crear tarea</button>
+        <button class="nav-btn" id="btnCursos">Cursos</button>
+        <button class="nav-btn" id="btnCrearTarea">Crear tarea</button>
 
         <div class="sidebar-espaciador"></div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar sesion</button>
     </aside>
+
+    <div class="toast" id="toast"></div>
 
     <main class="contenido">
         <div class="contenido-header">
@@ -299,7 +362,6 @@
 
         <div class="layout-grupos">
 
-            <!-- lista de grupos -->
             <div class="panel-lista">
                 <div class="card">
                     <div class="card-header">
@@ -313,7 +375,6 @@
                 <button class="btn-atras" id="btnAtras">Atras</button>
             </div>
 
-            <!-- detalle del grupo seleccionado -->
             <div class="panel-detalle" id="panelDetalle">
                 <div class="card">
                     <p class="placeholder-detalle">Seleccione un grupo para ver y editar sus miembros.</p>
@@ -323,28 +384,44 @@
         </div>
     </main>
 
+    <script src="js/config.js"></script>
     <script>
-        const BASE = 'http://170.9.26.131:80';
+        const BASE = window.API_BASE;
 
         const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
         if (!usuario.idUsuario) window.location.href = BASE + '/login';
         if (usuario.nombre) document.getElementById('nombreUsuario').textContent = usuario.nombre;
 
-        const params  = new URLSearchParams(window.location.search);
-        const idTarea = params.get('idTarea');
+        document.getElementById('btnCursos').onclick    = () => window.location.href = BASE + '/menuProfesor';
+        document.getElementById('btnCrearTarea').onclick = () => window.location.href = BASE + '/crearTarea';
+
+        const params      = new URLSearchParams(window.location.search);
+        const idTarea     = params.get('idTarea');
         const nombreTarea = params.get('nombre') || 'Tarea';
 
         document.getElementById('tituloPantalla').textContent = 'Grupos: ' + nombreTarea;
         document.getElementById('subtitulo').textContent = 'Administre los grupos de esta tarea';
 
         document.getElementById('btnAtras').onclick = () => {
-            window.location.href = BASE + '/verEntregas?idTarea=' + idTarea + '&nombre=' + encodeURIComponent(nombreTarea);
+            window.location.href = BASE + '/verEntregas?idTarea=' + idTarea +
+                '&nombre=' + encodeURIComponent(nombreTarea) + '&esGrupal=1';
         };
 
-        // estado local de grupos
+        // ── Estado ──────────────────────────────────────────────
         let grupos = [];
+        let todosLosEstudiantes = [];
         let grupoSeleccionado = null;
 
+        // ── Toast ────────────────────────────────────────────────
+        function mostrarToast(msg, esError = false) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast visible' + (esError ? ' error' : '');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => { t.className = 'toast'; }, 2800);
+        }
+
+        // ── Render lista de grupos ───────────────────────────────
         function renderListaGrupos() {
             const lista = document.getElementById('listaGrupos');
             lista.innerHTML = '';
@@ -356,11 +433,12 @@
 
             grupos.forEach(g => {
                 const fila = document.createElement('div');
-                fila.className = 'fila-grupo' + (grupoSeleccionado && grupoSeleccionado.idGrupo === g.idGrupo ? ' seleccionado' : '');
+                const selec = grupoSeleccionado && grupoSeleccionado.idGrupoTrabajo === g.idGrupoTrabajo;
+                fila.className = 'fila-grupo' + (selec ? ' seleccionado' : '');
 
                 const nombre = document.createElement('span');
                 nombre.className   = 'nombre-grupo';
-                nombre.textContent = g.nombre;
+                nombre.textContent = g.nombreGrupoTrabajo;
 
                 const cant = document.createElement('span');
                 cant.className   = 'cant-miembros';
@@ -379,6 +457,17 @@
             renderDetalleGrupo(grupo);
         }
 
+        // IDs de estudiantes en otros grupos (excluye el grupo actual)
+        function obtenerAsignados(excluirIdGrupo) {
+            const set = new Set();
+            grupos.forEach(g => {
+                if (g.idGrupoTrabajo === excluirIdGrupo) return;
+                (g.miembros || []).forEach(m => set.add(Number(m.idUsuario)));
+            });
+            return set;
+        }
+
+        // ── Render detalle ───────────────────────────────────────
         function renderDetalleGrupo(grupo) {
             const panel = document.getElementById('panelDetalle');
             panel.innerHTML = '';
@@ -397,56 +486,47 @@
             campoNombre.innerHTML = '<label>Nombre</label>';
             const inputNombre = document.createElement('input');
             inputNombre.type  = 'text';
-            inputNombre.value = grupo.nombre;
+            inputNombre.value = grupo.nombreGrupoTrabajo;
             campoNombre.appendChild(inputNombre);
 
             // lista de miembros
             const listaMiembros = document.createElement('div');
             listaMiembros.className = 'lista-miembros';
+            renderMiembros(grupo, listaMiembros);
 
-            const miembros = grupo.miembros || [];
-            if (miembros.length === 0) {
-                listaMiembros.innerHTML = '<p class="sin-miembros">Sin estudiantes en este grupo.</p>';
-            } else {
-                miembros.forEach(m => {
-                    listaMiembros.appendChild(crearFilaMiembro(m, grupo, listaMiembros));
-                });
-            }
-
-            // agregar miembro
+            // buscador para agregar
             const secAgregar = document.createElement('div');
             secAgregar.className = 'agregar-miembro';
 
-            const inputCarnet = document.createElement('input');
-            inputCarnet.type        = 'text';
-            inputCarnet.placeholder = 'Carnet del estudiante';
+            const lbl = document.createElement('p');
+            lbl.className   = 'agregar-miembro-label';
+            lbl.textContent = 'Agregar estudiante (nombre de usuario o correo)';
 
-            const btnAgregar = document.createElement('button');
-            btnAgregar.className   = 'btn-agregar';
-            btnAgregar.textContent = 'Agregar';
-            btnAgregar.onclick = async () => {
-                const carnet = inputCarnet.value.trim();
-                if (!carnet) return;
+            const wrap = document.createElement('div');
+            wrap.className = 'buscador-wrap';
 
-                try {
-                    const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ idGrupo: grupo.idGrupo, accion: 'agregar', carnet })
-                    });
+            const inputBuscar = document.createElement('input');
+            inputBuscar.type        = 'text';
+            inputBuscar.placeholder = 'Escriba para buscar...';
 
-                    if (res.ok) {
-                        // actualizar estado local
-                        if (!grupo.miembros) grupo.miembros = [];
-                        grupo.miembros.push({ carnet, nombre: carnet });
-                        inputCarnet.value = '';
-                        seleccionarGrupo(grupo);
-                    }
-                } catch (_) {}
-            };
+            const dropdown = document.createElement('div');
+            dropdown.className = 'dropdown-estudiantes';
 
-            secAgregar.appendChild(inputCarnet);
-            secAgregar.appendChild(btnAgregar);
+            wrap.appendChild(inputBuscar);
+            wrap.appendChild(dropdown);
+            secAgregar.appendChild(lbl);
+            secAgregar.appendChild(wrap);
+
+            inputBuscar.addEventListener('input', () => {
+                renderDropdown(dropdown, inputBuscar.value.trim().toLowerCase(), grupo, listaMiembros, inputBuscar);
+            });
+            inputBuscar.addEventListener('focus', () => {
+                renderDropdown(dropdown, inputBuscar.value.trim().toLowerCase(), grupo, listaMiembros, inputBuscar);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!wrap.contains(e.target)) dropdown.classList.remove('abierto');
+            });
 
             // acciones
             const acciones = document.createElement('div');
@@ -456,16 +536,15 @@
             btnEliminar.className   = 'btn-eliminar-grupo';
             btnEliminar.textContent = 'Eliminar grupo';
             btnEliminar.onclick = async () => {
-                if (!confirm('Seguro que desea eliminar este grupo?')) return;
+                if (!confirm('¿Seguro que desea eliminar este grupo?')) return;
                 try {
-                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupo, {
-                        method: 'DELETE'
-                    });
+                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupoTrabajo, { method: 'DELETE' });
                 } catch (_) {}
-                grupos = grupos.filter(g => g.idGrupo !== grupo.idGrupo);
+                grupos = grupos.filter(g => g.idGrupoTrabajo !== grupo.idGrupoTrabajo);
                 grupoSeleccionado = null;
                 renderListaGrupos();
                 panel.innerHTML = '<div class="card"><p class="placeholder-detalle">Seleccione un grupo para ver y editar sus miembros.</p></div>';
+                mostrarToast('Grupo eliminado');
             };
 
             const btnGuardar = document.createElement('button');
@@ -474,15 +553,16 @@
             btnGuardar.onclick = async () => {
                 const nuevoNombre = inputNombre.value.trim();
                 if (!nuevoNombre) return;
-                grupo.nombre = nuevoNombre;
                 try {
-                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupo, {
+                    await fetch(BASE + '/api/tareas/' + idTarea + '/grupos/' + grupo.idGrupoTrabajo, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ nombre: nuevoNombre })
                     });
                 } catch (_) {}
+                grupo.nombreGrupoTrabajo = nuevoNombre;
                 renderListaGrupos();
+                mostrarToast('Nombre guardado');
             };
 
             acciones.appendChild(btnEliminar);
@@ -496,13 +576,103 @@
             panel.appendChild(card);
         }
 
+        function renderMiembros(grupo, contenedor) {
+            contenedor.innerHTML = '';
+            const miembros = grupo.miembros || [];
+            if (miembros.length === 0) {
+                contenedor.innerHTML = '<p class="sin-miembros">Sin estudiantes en este grupo.</p>';
+                return;
+            }
+            miembros.forEach(m => contenedor.appendChild(crearFilaMiembro(m, grupo, contenedor)));
+        }
+
+        // ── Dropdown ─────────────────────────────────────────────
+        function renderDropdown(dropdown, q, grupo, listaMiembros, inputBuscar) {
+            dropdown.innerHTML = '';
+
+            const enEsteGrupo = new Set((grupo.miembros || []).map(m => Number(m.idUsuario)));
+            const enOtroGrupo = obtenerAsignados(grupo.idGrupoTrabajo);
+
+            const candidatos = todosLosEstudiantes.filter(e => {
+                if (enEsteGrupo.has(Number(e.idUsuario))) return false;
+                if (!q) return true;
+                return (
+                    (e.nombre  || '').toLowerCase().includes(q) ||
+                    (e.carnet  || '').toLowerCase().includes(q) ||
+                    (e.correo  || '').toLowerCase().includes(q)
+                );
+            });
+
+            if (candidatos.length === 0) {
+                dropdown.innerHTML = '<p class="dropdown-vacio">Sin resultados</p>';
+                dropdown.classList.add('abierto');
+                return;
+            }
+
+            candidatos.forEach(e => {
+                const ocupado = enOtroGrupo.has(Number(e.idUsuario));
+                const item = document.createElement('div');
+                item.className = 'item-dropdown' + (ocupado ? ' ocupado' : '');
+
+                const info = document.createElement('div');
+                info.className = 'item-info';
+                info.innerHTML = `<div class="item-nombre">${e.nombre}</div>
+                                  <div class="item-sub">${e.carnet} · ${e.correo || ''}</div>`;
+
+                const badge = document.createElement('span');
+                badge.className   = ocupado ? 'badge-ocupado' : 'badge-libre';
+                badge.textContent = ocupado ? 'Ya en grupo' : 'Disponible';
+
+                item.appendChild(info);
+                item.appendChild(badge);
+
+                if (!ocupado) {
+                    item.onclick = () => agregarMiembro(e, grupo, listaMiembros, inputBuscar, dropdown);
+                }
+
+                dropdown.appendChild(item);
+            });
+
+            dropdown.classList.add('abierto');
+        }
+
+        async function agregarMiembro(estudiante, grupo, listaMiembros, inputBuscar, dropdown) {
+            dropdown.classList.remove('abierto');
+            inputBuscar.value = '';
+
+            try {
+                const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idGrupo: grupo.idGrupoTrabajo, accion: 'agregar', carnet: estudiante.carnet })
+                });
+
+                if (res.ok) {
+                    if (!grupo.miembros) grupo.miembros = [];
+                    grupo.miembros.push({
+                        idUsuario: estudiante.idUsuario,
+                        carnet: estudiante.carnet,
+                        nombre: estudiante.nombre
+                    });
+                    renderMiembros(grupo, listaMiembros);
+                    renderListaGrupos();
+                    mostrarToast(estudiante.nombre + ' agregado');
+                } else {
+                    const data = await res.json().catch(() => ({}));
+                    mostrarToast(data.error || 'No se pudo agregar', true);
+                }
+            } catch (_) {
+                mostrarToast('Error de conexion', true);
+            }
+        }
+
         function crearFilaMiembro(miembro, grupo, contenedor) {
             const fila = document.createElement('div');
             fila.className = 'fila-miembro';
 
             const datos = document.createElement('div');
             datos.className = 'datos-est';
-            datos.innerHTML = '<div class="carnet">' + miembro.carnet + '</div>' +
+            datos.innerHTML = '<div class="carnet">' + (miembro.carnet || '') + '</div>' +
                               '<div class="nombre-est">' + (miembro.nombre || '') + '</div>';
 
             const btnQuitar = document.createElement('button');
@@ -513,12 +683,16 @@
                     await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ idGrupo: grupo.idGrupo, accion: 'quitar', carnet: miembro.carnet })
+                        body: JSON.stringify({ idGrupo: grupo.idGrupoTrabajo, accion: 'quitar', carnet: miembro.carnet })
                     });
                 } catch (_) {}
-                grupo.miembros = grupo.miembros.filter(m => m.carnet !== miembro.carnet);
+                grupo.miembros = grupo.miembros.filter(m => m.idUsuario !== miembro.idUsuario);
                 fila.remove();
+                if (contenedor.querySelectorAll('.fila-miembro').length === 0) {
+                    contenedor.innerHTML = '<p class="sin-miembros">Sin estudiantes en este grupo.</p>';
+                }
                 renderListaGrupos();
+                mostrarToast(miembro.nombre + ' quitado');
             };
 
             fila.appendChild(datos);
@@ -526,6 +700,7 @@
             return fila;
         }
 
+        // ── Nuevo grupo ──────────────────────────────────────────
         document.getElementById('btnNuevoGrupo').addEventListener('click', async () => {
             const nombre = prompt('Nombre del nuevo grupo:');
             if (!nombre || !nombre.trim()) return;
@@ -534,37 +709,54 @@
                 const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre: nombre.trim(), miembros: [] })
+                    body: JSON.stringify({ nombre: nombre.trim() })
                 });
 
                 const data = await res.json().catch(() => null);
                 if (res.ok) {
-                    const nuevoGrupo = { idGrupo: data.idGrupo || Date.now(), nombre: nombre.trim(), miembros: [] };
+                    const nuevoGrupo = {
+                        idGrupoTrabajo: data.idGrupo,
+                        nombreGrupoTrabajo: nombre.trim(),
+                        miembros: []
+                    };
                     grupos.push(nuevoGrupo);
                     renderListaGrupos();
                     seleccionarGrupo(nuevoGrupo);
+                    mostrarToast('Grupo creado');
                 }
             } catch (_) {}
         });
 
-        async function cargarGrupos() {
+        // ── Carga inicial ────────────────────────────────────────
+        async function cargarDatos() {
             if (!idTarea) {
                 document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">No se especifico una tarea.</p>';
                 return;
             }
 
             try {
-                const res = await fetch(BASE + '/api/tareas/' + idTarea + '/grupos');
-                if (res.ok) {
-                    const data = await res.json();
-                    grupos = data.grupos || data || [];
-                    renderListaGrupos();
+                const [resGrupos, resEst] = await Promise.all([
+                    fetch(BASE + '/api/tareas/' + idTarea + '/grupos'),
+                    fetch(BASE + '/api/tareas/' + idTarea + '/estudiantes')
+                ]);
+
+                if (resGrupos.ok) {
+                    const data = await resGrupos.json();
+                    grupos = data.grupos || [];
                 } else {
                     document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">Error al cargar grupos.</p>';
                 }
+
+                if (resEst.ok) {
+                    const data = await resEst.json();
+                    todosLosEstudiantes = data.estudiantes || [];
+                }
+
             } catch (_) {
                 document.getElementById('listaGrupos').innerHTML = '<p class="estado-info">Error de conexion.</p>';
             }
+
+            renderListaGrupos();
         }
 
         document.getElementById('btnCerrarSesion').addEventListener('click', () => {
@@ -572,7 +764,7 @@
             window.location.href = BASE + '/login';
         });
 
-        cargarGrupos();
+        cargarDatos();
     </script>
 </body>
 </html>
