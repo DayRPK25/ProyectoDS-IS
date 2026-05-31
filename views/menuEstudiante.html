@@ -217,7 +217,6 @@
         </div>
 
         <button class="nav-btn activo" id="btnCursos">Cursos</button>
-        <button class="nav-btn" id="btnCrearTarea">Crear tarea</button>
 
         <div class="sidebar-espaciador"></div>
 
@@ -228,7 +227,6 @@
         <section id="seccionCursos">
             <div class="barra-titulo">
                 <h2>Mis cursos</h2>
-                <button class="btn-nuevo" id="btnNuevoCurso">+ Nuevo curso</button>
             </div>
 
             <div class="lista-cursos" id="listaCursos">
@@ -259,11 +257,6 @@
         if (!datosUsuario.idUsuario) {
             window.location.href = BASE + '/login';
         }
-
-        // navegacion del sidebar
-        document.getElementById('btnCrearTarea').addEventListener('click', () => {
-            window.location.href = BASE + '/crearTarea';
-        });
 
         // dibuja la lista de cursos del estudiante
         function renderCursos(cursos) {
@@ -388,32 +381,6 @@
                 lista.innerHTML = '<p class="sin-tareas">Error de conexion.</p>';
             }
         }
-
-        // crea un curso nuevo pidiendo el nombre al profesor
-        document.getElementById('btnNuevoCurso').addEventListener('click', async () => {
-            const nombreCurso = prompt('Nombre del nuevo curso:');
-            if (!nombreCurso || !nombreCurso.trim()) return;
-
-            try {
-                const response = await fetch(BASE + '/api/cursos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombreCurso: nombreCurso.trim() })
-                });
-
-                const data = await response.json().catch(() => null);
-
-                if (!response.ok) {
-                    alert((data && data.error) ? data.error : 'Error al crear el curso.');
-                    return;
-                }
-
-                cargarCursos();
-
-            } catch (error) {
-                alert('Error de conexion. Intente de nuevo.');
-            }
-        });
 
         document.getElementById('btnCerrarSesion').addEventListener('click', () => {
             sessionStorage.removeItem('usuario');
