@@ -33,7 +33,7 @@ class TareaModel
     {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stmtTareas = $this->pdo->prepare("
-                SELECT t.nombreTarea, c.nombreCurso, t.fechaCreacion, t.fechaEntrega, t.descripcion, t.idTarea
+                SELECT t.nombreTarea, c.nombreCurso, t.fechaCreacion, t.fechaEntrega, t.descripcion, t.idTarea, t.esGrupal
                 FROM Tarea t
                 JOIN Curso c on t.idCurso = c.idCurso
                 WHERE t.idCurso = ?
