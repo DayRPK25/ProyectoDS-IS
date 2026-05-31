@@ -123,5 +123,65 @@ class CursoController
         }
     }
 
+    // Agregar después del método crearCurso()
+    public function unirseACurso(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
+        if (!isset($_SESSION['login_response'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Sesión no encontrada']);
+            exit;
+        }
+
+        $session = $_SESSION['login_response'];
+
+        if ($session['rol'] !== 'ESTUDIANTE') {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Solo estudiantes pueden unirse a cursos']);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($data['idCurso'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'idCurso requerido']);
+            exit;
+        }
+
+        try {
+            $this->cursoModel->unirseACurso((int) $session['idUsuario'], (int) $data['idCurso']);
+            http_response_code(200);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => true, 'estado' => 'unido al curso']);
+            exit;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Error al unirse al curso']);
+            exit;
+        }
+    }
+
+    // Y un método para listar todos los cursos (para que el estudiante pueda elegir)
+    public function listarTodos(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['login_response'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Sesión no encontrada']);
+            exit;
+        }
+        try {
+            $cursos = $this->cursoModel->listarTodosLosCursos();
+            http_response_code(200);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => true, 'cursos' => $cursos]);
+            exit;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Error al listar cursos']);
+            exit;
+        }
+    }
 }

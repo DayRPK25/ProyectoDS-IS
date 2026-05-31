@@ -93,6 +93,14 @@ $router->add('POST', '/api/cursos', function () {
     $controller->crearCurso();
 });
 
+$router->add('GET', '/api/cursos/todos', function () {
+    (new CursoController())->listarTodos();
+});
+
+$router->add('POST', '/api/cursos/unirse', function () {
+    (new CursoController())->unirseACurso();
+});
+
 $router->add('GET', '/api/tareas', function () {
     $controller = new TareaController();
     $controller->cargarTareas();

@@ -50,4 +50,21 @@ class CursoModel
         $stmt->execute([$idUsuario, $nombreCurso, $descripcion]);
         return (int) $this->pdo->lastInsertId();
     }
+    public function unirseACurso(int $idUsuario, int $idCurso): void
+    {
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $this->pdo->prepare("
+            INSERT IGNORE INTO EstudianteXCurso (idUsuario, idCurso) VALUES (?, ?)
+        ");
+        $stmt->execute([$idUsuario, $idCurso]);
+    }
+    public function listarTodosLosCursos(): array
+    {
+        $stmt = $this->pdo->prepare("SELECT idCurso, nombreCurso FROM Curso ORDER BY nombreCurso");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    
 }
