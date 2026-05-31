@@ -265,6 +265,9 @@
 
             <div class="card-pie" style="gap:10px">
                 <button class="btn-atras" id="btnAtras">Atras</button>
+                <button class="btn-grupos" id="btnGrupos" style="display:none;background-color:#6B5B95;color:#fff;border:none;border-radius:20px;padding:8px 20px;font-size:0.85rem;cursor:pointer;">
+                    Gestionar grupos
+                </button>
             </div>
         </div>
     </main>
@@ -373,6 +376,16 @@
         document.getElementById('btnCerrarSesion').addEventListener('click', () => {
             sessionStorage.removeItem('usuario');
             window.location.href = BASE + '/login';
+        });
+        
+        const esGrupal = params.get('esGrupal');
+        if (esGrupal === '1') {
+            document.getElementById('btnGrupos').style.display = 'inline-block';
+        }
+
+        document.getElementById('btnGrupos').addEventListener('click', () => {
+            window.location.href = BASE + '/gestionGrupos?idTarea=' + idTarea +
+                '&nombre=' + encodeURIComponent(nombre);
         });
 
         cargarEntregas();

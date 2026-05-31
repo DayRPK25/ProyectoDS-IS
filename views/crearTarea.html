@@ -308,6 +308,9 @@
                     <input type="checkbox" id="checkGrupal">
                     <label for="checkGrupal">Tarea grupal</label>
                 </div>
+                <p id="avisoGrupal" style="display:none; font-size:0.78rem; color:#575757; padding: 0 0 4px 0;">
+                    Los grupos se configuran desde "Gestionar grupos" después de crear la tarea.
+                </p>
             </div>
 
             <p class="mensaje-error" id="mensajeError"></p>
@@ -335,6 +338,11 @@
 
         const selectCurso  = document.getElementById('selectCurso');
         const checkGrupal  = document.getElementById('checkGrupal');
+        // Muestra un aviso informativo cuando la tarea es grupal
+        checkGrupal.addEventListener('change', () => {
+            const aviso = document.getElementById('avisoGrupal');
+            aviso.style.display = checkGrupal.checked ? 'block' : 'none';
+        });
 
         // navegacion
         document.getElementById('btnCursos').addEventListener('click', () => {

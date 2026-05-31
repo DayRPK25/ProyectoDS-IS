@@ -318,7 +318,8 @@
                 btnVer.textContent = 'Entregas';
                 btnVer.onclick = () => {
                     window.location.href = BASE + '/entregas?idTarea=' + tarea.idTarea +
-                        '&nombre=' + encodeURIComponent(tarea.nombreTarea);
+                        '&nombre=' + encodeURIComponent(tarea.nombreTarea) +
+                        '&esGrupal=' + (tarea.esGrupal || 0);
                 };
 
                 const btnEditar = document.createElement('button');
