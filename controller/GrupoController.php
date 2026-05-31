@@ -38,6 +38,21 @@ class GrupoController
         }
     }
 
+    // GET /api/tareas/{idTarea}/estudiantes
+    public function listarEstudiantes(int $idTarea): void
+    {
+        $this->sesion();
+        try {
+            $estudiantes = $this->grupoModel->listarEstudiantesDelCurso($idTarea);
+            http_response_code(200);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => true, 'estudiantes' => $estudiantes]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Error al listar estudiantes']);
+        }
+    }
+
     // POST /api/tareas/{idTarea}/grupos
     // Body: { nombre, miembros[] } para crear grupo
     // Body: { idGrupo, accion: 'agregar'|'quitar', carnet } para gestionar miembros
@@ -48,7 +63,7 @@ class GrupoController
 
         // Si viene accion es gestión de miembros desde gestionGrupos.html
         if (!empty($data['accion'])) {
-            $this->gestionarMiembro($data);
+            $this->gestionarMiembro($data, $idTarea);
             return;
         }
 
@@ -72,7 +87,7 @@ class GrupoController
         }
     }
 
-    private function gestionarMiembro(array $data): void
+    private function gestionarMiembro(array $data, int $idTarea): void
     {
         if (empty($data['idGrupo']) || empty($data['carnet'])) {
             http_response_code(400);
@@ -89,13 +104,17 @@ class GrupoController
 
         try {
             if ($data['accion'] === 'agregar') {
-                $this->grupoModel->agregarMiembro((int) $data['idGrupo'], (int) $estudiante['idUsuario']);
+                $this->grupoModel->agregarMiembro((int) $data['idGrupo'], (int) $estudiante['idUsuario'], $idTarea);
             } else {
                 $this->grupoModel->quitarMiembro((int) $data['idGrupo'], (int) $estudiante['idUsuario']);
             }
             http_response_code(200);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['success' => true]);
+        
+        } catch (\RuntimeException $e) {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Error al gestionar miembro']);
@@ -139,4 +158,7 @@ class GrupoController
             echo json_encode(['success' => false, 'error' => 'Error al eliminar grupo']);
         }
     }
+
+    
+
 }

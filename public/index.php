@@ -140,7 +140,11 @@ $router->add('GET', '/api/tareas/{idTarea}/entregas', function (int $idTarea) {
 });
 
 // RUTAS que faltaban
-// Poner esto:
+
+$router->add('GET', '/api/tareas/{idTarea}/estudiantes', function (string $idTarea) {
+    (new GrupoController())->listarEstudiantes((int) $idTarea);
+});
+
 $router->add('GET', '/api/tareas/{idTarea}/grupos', function (string $idTarea) {
     (new GrupoController())->listar((int) $idTarea);
 });

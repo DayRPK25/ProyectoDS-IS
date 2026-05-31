@@ -66,12 +66,24 @@ class GrupoModel
         $stmt2->execute([$idGrupo]);
     }
 
-    public function agregarMiembro(int $idGrupo, int $idUsuario): void
+    public function agregarMiembro(int $idGrupo, int $idUsuario, int $idTarea): void
     {
         $stmt = $this->pdo->prepare("
+            SELECT eg.idGrupoTrabajo
+            FROM EstudianteXGrupoTrabajo eg
+            JOIN GrupoTrabajo g ON g.idGrupoTrabajo = eg.idGrupoTrabajo
+            JOIN Tarea t ON t.idCurso = g.idCurso
+            WHERE eg.idUsuario = ? AND t.idTarea = ?
+        ");
+        $stmt->execute([$idUsuario, $idTarea]);
+        if ($stmt->fetch()) {
+            throw new \RuntimeException('El estudiante ya pertenece a otro grupo de esta tarea');
+        }
+
+        $stmt2 = $this->pdo->prepare("
             INSERT IGNORE INTO EstudianteXGrupoTrabajo (idUsuario, idGrupoTrabajo) VALUES (?, ?)
         ");
-        $stmt->execute([$idUsuario, $idGrupo]);
+        $stmt2->execute([$idUsuario, $idGrupo]);
     }
 
     public function quitarMiembro(int $idGrupo, int $idUsuario): void
@@ -87,9 +99,9 @@ class GrupoModel
     {
         $stmt = $this->pdo->prepare("
             SELECT idUsuario, nombreUsuario AS carnet, nombre
-            FROM Usuario WHERE nombreUsuario = ? AND rol = 'ESTUDIANTE'
+            FROM Usuario WHERE (nombreUsuario = ? OR correo = ?) AND rol = 'ESTUDIANTE'
         ");
-        $stmt->execute([$carnet]);
+        $stmt->execute([$carnet, $carnet]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
@@ -101,4 +113,32 @@ class GrupoModel
         if (!$row) throw new \RuntimeException("Tarea no encontrada");
         return (int) $row['idCurso'];
     }
+
+    public function listarEstudiantesDelCurso(int $idTarea): array
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT
+                u.idUsuario,
+                u.nombreUsuario AS carnet,
+                u.nombre,
+                u.correo,
+                eg.idGrupoTrabajo AS grupoActual
+            FROM Tarea t
+            JOIN EstudianteXCurso ec ON ec.idCurso = t.idCurso
+            JOIN Usuario u ON u.idUsuario = ec.idUsuario AND u.rol = 'ESTUDIANTE'
+            LEFT JOIN EstudianteXGrupoTrabajo eg
+                ON eg.idUsuario = u.idUsuario
+                AND eg.idGrupoTrabajo IN (
+                    SELECT g.idGrupoTrabajo
+                    FROM GrupoTrabajo g
+                    JOIN Tarea t2 ON g.idCurso = t2.idCurso
+                    WHERE t2.idTarea = ?
+                )
+            WHERE t.idTarea = ?
+            ORDER BY u.nombre
+        ");
+        $stmt->execute([$idTarea, $idTarea]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
