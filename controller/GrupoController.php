@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../model/GrupoModel.php';
-require_once __DIR__ . '/../model/TareaModel.php';
+
 
 class GrupoController
 {
@@ -58,13 +58,7 @@ class GrupoController
             exit;
         }
 
-        // Necesitamos el idCurso de la tarea
-        $tareaModel = new TareaModel();
-        $tareas = $tareaModel->cargarTareasCurso(0); // no sirve — ver nota abajo
-        // Obtenemos el idCurso directo desde la BD
-        $pdo  = (new \ReflectionProperty(TareaModel::class, 'pdo'));
-        // Forma más directa: agregar método en TareaModel (ver nota)
-        // Por ahora usamos una consulta directa en el modelo de grupo
+        
         try {
             $idCurso = $this->grupoModel->obtenerIdCursoDeTarea($idTarea);
             $idGrupo = $this->grupoModel->crear((int) $session['idUsuario'], $idCurso, $data['nombre']);
