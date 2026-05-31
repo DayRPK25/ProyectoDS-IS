@@ -8,12 +8,12 @@
 // ============================================================
 
 // ── 1. Configuracion ──────────────────────────────────────
-require_once __DIR__ . '/../config/config.php';
+require_once 'config.php';
 
 // Headers globales: JSON por defecto, CORS abierto para desarrollo
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Preflight CORS - el browser pregunta antes de hacer POST cross-origin
@@ -31,13 +31,9 @@ spl_autoload_register(function (string $class): void {
         __DIR__ . '/../app/models/',
         __DIR__ . '/../app/controllers/',
         __DIR__ . '/../app/services/',
-        // subdirectorios de model/
-        __DIR__ . '/../model/Auth/',
+        __DIR__ . '/../controller/',
+        __DIR__ . '/../model/',
         __DIR__ . '/../model/Core/',
-        __DIR__ . '/../model/Tareas/',
-        __DIR__ . '/../model/Archivos/',
-        __DIR__ . '/../model/Editor/',
-        __DIR__ . '/../model/Bitacora/',
     ];
 
     foreach ($directorios as $dir) {
@@ -73,136 +69,77 @@ $router = new Router();
 // para que no sean atrapadas por el catch-all /{shortCode}
 
 // API para el Backend
+
+// Manda los datos del HTML para comparlos con los usuarios con la base de datos
 $router->add('POST', '/api/auth/login', function () {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    if (empty($data['correo']) || empty($data['contrasena'])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'correo y contrasena requeridos']);
-        exit;
-    }
-
-    $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
-    $pdo = new PDO($dsn, "admin", "password");
-
-    // busca el usuario por correo
-    $stmt = $pdo->prepare("SELECT * FROM Usuario WHERE correo = ?");
-    $stmt->execute([(string) $data['correo']]);
-    $usuario = $stmt->fetch();
-
-    if (!$usuario || !password_verify($data['contrasena'], $usuario['contrasena'])) {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'error' => 'credenciales invalidas']);
-        exit;
-    }
-
-    $response = [
-        'success'   => true,
-        'idUsuario' => $usuario['idUsuario'],
-        'nombre'    => $usuario['nombre'],
-        'rol'       => $usuario['rol'],
-        // token simple por ahora: en produccion reemplazar por JWT
-        'token'     => bin2hex(random_bytes(16)),
-    ];
-
-    http_response_code(200);
-    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
+    $controller = new UsuarioController();
+    $controller->login();
 });
 
+// Manda los datos del HTML para crear un nuevo usuario
 $router->add('POST', '/api/auth/register', function () {
-    $data = json_decode(file_get_contents('php://input'), true);
+    $controller = new UsuarioController();
+    $controller->register();
+});
 
-    $campos = ['correo', 'nombre', 'nombreUsuario', 'contrasena', 'rol'];
-    foreach ($campos as $campo) {
-        if (empty($data[$campo])) {
-            http_response_code(400);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'error' => "campo requerido: {$campo}"]);
-            exit;
-        }
-    }
-    
-    $rol = strtoupper($data['rol']);
-    if (!in_array($rol, ['ESTUDIANTE', 'PROFESOR'], true)) {
-        http_response_code(400);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['success' => false, 'error' => 'rol invalido, debe ser ESTUDIANTE o PROFESOR']);
-        exit;
-    }
-    
-    $hash = password_hash($data['contrasena'], PASSWORD_BCRYPT);
+// Obtiene los cursos según el usuario que inició sesión
+$router->add('GET', '/api/cursos', function () {
+    $controller = new CursoController();
+    $controller->cargarCursos();
+});
 
-    try {
-        $dsn = "mysql:host=localhost;dbname=sistema_entregas;charset=utf8mb4";
-        $pdo = new PDO($dsn, "admin", "password");
-        
-        // insertar usuario base
-        $stmt = $pdo->prepare(
-            "INSERT INTO Usuario (correo, nombre, nombreUsuario, contrasena, rol)
-             VALUES (?, ?, ?, ?, ?)"
-        );
-        $stmt->execute([
-            (string) $data['correo'],
-            (string) $data['nombre'],
-            (string) $data['nombreUsuario'],
-            (string) $hash,
-            (string) $rol
-        ]);
-        $idUsuario = (int) $pdo->lastInsertId();
-        
-        // insertar en tabla de rol correspondiente
-        if ($rol === 'PROFESOR') {
-            $codigo = $data['carnet'] ?? 'P' . $idUsuario;
-            $stmt2  = $pdo->prepare("INSERT INTO Profesor (codigoProfesor, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([(string) $codigo, (string) $idUsuario]);
-        } else {
-            $codigo = $data['carnet'] ?? 'E' . $idUsuario;
-            $stmt2  = $pdo->prepare("INSERT INTO Estudiante (codigoEstudiante, idUsuario) VALUES (?, ?)");
-            $stmt2->execute([(string) $codigo, (string) $idUsuario]);
-        }
-    
-    } catch (PDOException $e) {
-        // correo o nombreUsuario duplicado
-        $code = $e->getCode();
-        $msg = $e->getMessage();
-        if ($code === '23000') {
-            http_response_code(409);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'error' => 'Correo o nombre de usuario ya existe']);
-            exit;
-        }
-        elseif ($code === 'HY000' && str_contains($msg, 'chk_correo')) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => 'formato de correo inválido']);
-        }
-        http_response_code(500);
-        echo json_encode(['success' => false, 'error' => 'Error interno al registrar']);
-        exit;
-    }
-
-    http_response_code(201);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'success'   => true,
-        'idUsuario' => 0,
-        'estado'    => 'registrado',
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
+$router->add('POST', '/api/cursos', function () {
+    $controller = new CursoController();
+    $controller->crearCurso();
 });
 
 $router->add('GET', '/api/tareas', function () {
-    $data = json_decode(file_get_contents('php://input'), true);
-    
+    $controller = new TareaController();
+    $controller->cargarTareas();
 });
 
-$router->add('POST', '/api/tareas', function () {});
+$router->add('POST', '/api/archivop/guardar', function () {
+    $controller = new ArchivoPController();
+    $controller->guardarArchivo();
+});
 
-$router->add('PUT', '/api/tareas/{idTarea}', function (int $idTarea) {});
+$router->add('POST', '/api/archivop/actualizar', function () {
+    $controller = new ArchivoPController();
+    $controller->actualizarArchivo();
+});
+
+$router->add('POST', '/api/archivop/verificar', function () {
+    $controller = new ArchivoPController();
+    $controller->verificarArchivo();
+});
+
+$router->add('POST', '/api/tareas', function () {
+    (new TareaController())->crearTarea();
+});
+
+$router->add('PUT', '/api/tareas/{idTarea}', function (int $idTarea) {
+    $controller = new TareaController();
+    $controller->modificarTarea((int) $idTarea);
+});
+
+$router->add('POST', '/api/tareas/entregar', function () {
+    $controller = new EntregaController();
+    $controller->crearEntrega();
+});
+$router->add('GET', '/api/tareas/{idTarea}/entregas', function (int $idTarea) {
+    $controller = new EntregaController();
+    $controller->listarPorTarea((int) $idTarea);
+});
+
+// RUTAS que faltaban
+$router->add('GET', '/api/tareas/{idTarea}/grupos', function (int $idTarea) {});
 
 $router->add('POST', '/api/tareas/{idTarea}/grupos', function (int $idTarea) {});
 
-$router->add('GET', '/api/tareas/{idTarea}/entregas', function (int $idTarea) {});
+$router->add('PUT', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (int $idTarea, int $idGrupo) {});
+
+$router->add('DELETE', '/api/tareas/{idTarea}/grupos/{idGrupo}', function (int $idTarea, int $idGrupo) {});
+
 
 $router->add('POST', '/api/archivos', function () {});
 
@@ -216,7 +153,15 @@ $router->add('POST', '/api/ejecucion', function () {});
 
 $router->add('GET', '/api/entregas/{idEntrega}/firma', function (int $idEntrega) {});
 
-$router->add('GET', '/api/entregas/{idEntrega}', function (int $idEntrega) {});
+$router->add('GET', '/api/entregas/{idEntrega}', function (int $idEntrega) {
+    $controller = new EntregaController();
+    $controller->obtener((int) $idEntrega);
+});
+
+$router->add('PUT', '/api/entregas/{idEntrega}', function (int $idEntrega) {
+    $controller = new EntregaController();
+    $controller->calificar((int) $idEntrega);
+});
 
 $router->add('GET', '/api/bitacora', function () {});
 
@@ -270,7 +215,7 @@ $router->add('POST', '/api/urls', function () {
 $router->add('GET', '/', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
-    require_once __DIR__ . '/../views/home.html';
+    require_once __DIR__ . '/../views/login.html';
     exit;
 });
 
@@ -290,7 +235,15 @@ $router->add('GET', '/register', function () {
     exit;
 });
 
-// Dirige a la página de menuEstudiante
+// Dirige a la página de menuProfesor
+$router->add('GET', '/menuProfesor', function () {
+    // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/menuProfesor.html';
+    exit;
+});
+
+// Dirige a la página de menuProfesor
 $router->add('GET', '/menuEstudiante', function () {
     // Para el HTML desactivamos el Content-Type JSON que pusimos arriba
     header('Content-Type: text/html; charset=utf-8');
@@ -298,19 +251,30 @@ $router->add('GET', '/menuEstudiante', function () {
     exit;
 });
 
-$router->add('GET', '/api/urls', function () {
-    (new UrlController())->index();
+$router->add('GET', '/crearTarea', function () {
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/crearTarea.html';
+    exit;
 });
 
-// Estadisticas - ANTES del catch-all /{shortCode}
-$router->add('GET', '/api/urls/{shortCode}/stats', function (string $shortCode) {
-    (new StatsController())->show($shortCode);
+$router->add('GET', '/entregas', function () {
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/verEntregas.html';
+    exit;
 });
 
-// Redireccion - catch-all de codigos cortos
-$router->add('GET', '/{shortCode}', function (string $shortCode) {
-    (new UrlController())->redirect($shortCode);
+$router->add('GET', '/revisarEntrega', function () {
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/revisarEntrega.html';
+    exit;
 });
+
+$router->add('GET', '/gestionGrupos', function () {
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../views/gestionGrupos.html';
+    exit;
+});
+
 
 // ── 5. Despachar ──────────────────────────────────────────
 $router->dispatch($method, $uri);

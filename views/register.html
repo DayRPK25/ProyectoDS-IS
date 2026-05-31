@@ -38,7 +38,9 @@
 
     <button type="button" id="buttonRegistrarse">Registrarse</button>
     
+    <script src="js/config.js"></script>
     <script>
+        const BASE = window.API_BASE;
         const buttonRegistrarse = document.getElementById('buttonRegistrarse');
 
         buttonRegistrarse.addEventListener('click', async () => {
@@ -51,7 +53,7 @@
             console.log("Datos a enviar:", { correo, nombre, nombreUsuario, rol });
 
             try {
-                const response = await fetch('http://170.9.26.131:80/api/auth/register', {
+                const response = await fetch(BASE + '/api/auth/register', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ correo, nombre, nombreUsuario, contrasena, rol })
@@ -65,8 +67,8 @@
                     return;
                 }
 
-                console.log('Detalle del servidor:', data);
-                alert('Registro exitoso. Intente de nuevo.');
+                // tras registrar, volvemos al login con el aviso de cuenta creada
+                window.location.href = BASE + '/login?cuentaCreada=1';
 
             } catch (error) {
                 console.error('Error al registrarse:', error);

@@ -129,18 +129,18 @@
 
         <div class="tarjeta-cuerpo">
             <div class="campo">
-                <label for="inputNombreUsuario">Nombre de usuario</label>
-                <input type="text" id="inputNombreUsuario" name="nombreUsuario" autocomplete="username">
+                <label for="inputNombreUsuario">Correo</label>
+                <input type="text" id="inputCorreo" name="correo" autocomplete="email">
             </div>
             <div class="campo">
-                <label for="inputContrasena">Contrasena</label>
+                <label for="inputContrasena">Contraseña</label>
                 <input type="password" id="inputContrasena" name="contrasena" autocomplete="current-password">
             </div>
         </div>
 
         <div class="enlaces">
-            <a href="http://170.9.26.131:80/forgot">Olvide mi contrasena</a>
-            <a href="http://170.9.26.131:80/register">Crear cuenta</a>
+            <a href="forgot">Olvide mi contrasena</a>
+            <a href="register">Crear cuenta</a>
         </div>
 
         <p class="mensaje-error" id="mensajeError"></p>
@@ -150,8 +150,9 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
     <script>
-        const BASE = 'http://170.9.26.131:80';
+        const BASE = window.API_BASE;
 
         // mostrar aviso si viene de otra pantalla (cuenta creada, contrasena cambiada)
         const params = new URLSearchParams(window.location.search);
@@ -165,13 +166,13 @@
         }
 
         document.getElementById('buttonIniciarSesion').addEventListener('click', async () => {
-            const nombreUsuario = document.getElementById('inputNombreUsuario').value.trim();
+            const correo = document.getElementById('inputCorreo').value.trim();
             const contrasena    = document.getElementById('inputContrasena').value.trim();
             const mensajeError  = document.getElementById('mensajeError');
 
             mensajeError.style.display = 'none';
 
-            if (!nombreUsuario || !contrasena) {
+            if (!correo || !contrasena) {
                 mensajeError.textContent = 'Por favor, complete todos los campos.';
                 mensajeError.style.display = 'block';
                 return;
@@ -181,7 +182,7 @@
                 const response = await fetch(BASE + '/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombreUsuario, contrasena })
+                    body: JSON.stringify({ correo, contrasena })
                 });
 
                 const data = await response.json().catch(() => null);
@@ -207,7 +208,7 @@
                 }
 
             } catch (error) {
-                mensajeError.textContent = 'Error de conexion. Intente de nuevo.';
+                mensajeError.textContent = 'Error de conexión. Intente de nuevo.';
                 mensajeError.style.display = 'block';
             }
         });

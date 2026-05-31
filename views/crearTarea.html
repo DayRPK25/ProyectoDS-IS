@@ -268,7 +268,7 @@
             <span id="nombreUsuario">Usuario</span>
         </div>
 
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
+        <button class="nav-btn" id="btnCursos">Cursos</button>
         <button class="nav-btn activo">Crear tarea</button>
 
         <div class="sidebar-espaciador"></div>
@@ -276,12 +276,19 @@
     </aside>
 
     <main class="contenido">
-        <h2>Crear tarea</h2>
+        <h2 id="tituloPantalla">Crear tarea</h2>
 
         <div class="card-form">
-            <div class="card-header"><h3>Nueva tarea</h3></div>
+            <div class="card-header"><h3 id="tituloCard">Nueva tarea</h3></div>
 
             <div class="card-cuerpo">
+                <div class="campo">
+                    <label for="selectCurso">Curso</label>
+                    <select id="selectCurso" style="width:100%;padding:8px 12px;border:none;border-radius:8px;background-color:#fff;font-size:0.9rem;color:#1C1B1F;outline:none;">
+                        <option value="">Cargando cursos...</option>
+                    </select>
+                </div>
+
                 <div class="campo">
                     <label for="inputNombre">Nombre de la tarea</label>
                     <input type="text" id="inputNombre" placeholder="Ej: Numero par o impar">
@@ -301,112 +308,100 @@
                     <input type="checkbox" id="checkGrupal">
                     <label for="checkGrupal">Tarea grupal</label>
                 </div>
-
-                <!-- grupos: visibles solo si es grupal -->
-                <div class="seccion-grupos" id="seccionGrupos">
-                    <label>Grupos de trabajo</label>
-                    <div id="listaGrupos"></div>
-                    <button class="btn-agregar-grupo" id="btnAgregarGrupo">+ Agregar grupo</button>
-                </div>
             </div>
 
             <p class="mensaje-error" id="mensajeError"></p>
 
             <div class="card-pie">
-                <button class="btn-cancelar" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cancelar</button>
+                <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
                 <button class="btn-crear" id="btnCrear">Crear</button>
             </div>
         </div>
     </main>
 
+    <script src="js/config.js"></script>
     <script>
-        const BASE = 'http://170.9.26.131:80';
+        const BASE = window.API_BASE;
 
         const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
         if (!usuario.idUsuario) window.location.href = BASE + '/login';
         if (usuario.nombre) document.getElementById('nombreUsuario').textContent = usuario.nombre;
 
-        const checkGrupal   = document.getElementById('checkGrupal');
-        const seccionGrupos = document.getElementById('seccionGrupos');
-        const listaGrupos   = document.getElementById('listaGrupos');
-        let contadorGrupos  = 0;
+        // si viene idTarea en la url estamos editando, si no es creacion nueva
+        const params       = new URLSearchParams(window.location.search);
+        const idTarea      = params.get('idTarea');
+        const idCursoParam  = params.get('idCurso');
+        const esEdicion    = !!idTarea;
 
-        checkGrupal.addEventListener('change', () => {
-            seccionGrupos.style.display = checkGrupal.checked ? 'flex' : 'none';
+        const selectCurso  = document.getElementById('selectCurso');
+        const checkGrupal  = document.getElementById('checkGrupal');
+
+        // navegacion
+        document.getElementById('btnCursos').addEventListener('click', () => {
+            window.location.href = BASE + '/menuProfesor';
+        });
+        document.getElementById('btnCancelar').addEventListener('click', () => {
+            window.location.href = BASE + '/menuProfesor';
         });
 
-        function crearFilaMiembro() {
-            const fila = document.createElement('div');
-            fila.className = 'fila-miembro';
-
-            const input = document.createElement('input');
-            input.type        = 'text';
-            input.placeholder = 'Carnet del estudiante (ej: 2022163260)';
-
-            const btnQuitar = document.createElement('button');
-            btnQuitar.className   = 'btn-quitar-miembro';
-            btnQuitar.textContent = 'Quitar';
-            btnQuitar.onclick = () => fila.remove();
-
-            fila.appendChild(input);
-            fila.appendChild(btnQuitar);
-            return fila;
+        // en modo edicion ajustamos titulos y precargamos los campos desde la url
+        if (esEdicion) {
+            document.getElementById('tituloPantalla').textContent = 'Editar tarea';
+            document.getElementById('tituloCard').textContent     = 'Editar tarea';
+            document.getElementById('btnCrear').textContent        = 'Guardar';
+            document.getElementById('inputNombre').value      = params.get('nombre') || '';
+            document.getElementById('inputDescripcion').value = params.get('descripcion') || '';
+            document.getElementById('inputFechaEntrega').value = params.get('fechaEntrega') || '';
         }
 
-        function crearBloqueGrupo() {
-            contadorGrupos++;
-            const num = contadorGrupos;
+        // carga los cursos del profesor en el selector
+        async function cargarCursos() {
+            try {
+                const response = await fetch(BASE + '/api/cursos', {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json().catch(() => null);
 
-            const bloque = document.createElement('div');
-            bloque.className  = 'bloque-grupo';
-            bloque.dataset.id = num;
+                if (!response.ok || !data || !data.cursos) {
+                    selectCurso.innerHTML = '<option value="">No se pudieron cargar los cursos</option>';
+                    return;
+                }
 
-            // cabecera: nombre del grupo + boton quitar grupo
-            const header = document.createElement('div');
-            header.className = 'bloque-grupo-header';
+                if (data.cursos.length === 0) {
+                    selectCurso.innerHTML = '<option value="">No hay cursos, cree uno primero</option>';
+                    return;
+                }
 
-            const inputNombre = document.createElement('input');
-            inputNombre.type        = 'text';
-            inputNombre.placeholder = 'Nombre del grupo ' + num;
-            inputNombre.className   = 'nombre-grupo';
-
-            const btnQuitar = document.createElement('button');
-            btnQuitar.className   = 'btn-quitar-grupo';
-            btnQuitar.textContent = 'Quitar grupo';
-            btnQuitar.onclick = () => bloque.remove();
-
-            header.appendChild(inputNombre);
-            header.appendChild(btnQuitar);
-
-            // lista de miembros
-            const listaMiembros = document.createElement('div');
-            listaMiembros.className = 'lista-miembros';
-            listaMiembros.appendChild(crearFilaMiembro());
-
-            // boton agregar miembro
-            const btnAgregar = document.createElement('button');
-            btnAgregar.className   = 'btn-agregar-miembro';
-            btnAgregar.textContent = '+ Agregar estudiante';
-            btnAgregar.onclick = () => listaMiembros.appendChild(crearFilaMiembro());
-
-            bloque.appendChild(header);
-            bloque.appendChild(listaMiembros);
-            bloque.appendChild(btnAgregar);
-            return bloque;
+                selectCurso.innerHTML = '';
+                data.cursos.forEach(curso => {
+                    const opt = document.createElement('option');
+                    opt.value       = curso.idCurso;
+                    opt.textContent = curso.nombreCurso;
+                    if (idCursoParam && String(curso.idCurso) === String(idCursoParam)) {
+                        opt.selected = true;
+                    }
+                    selectCurso.appendChild(opt);
+                });
+            } catch (error) {
+                selectCurso.innerHTML = '<option value="">Error de conexion</option>';
+            }
         }
-
-        document.getElementById('btnAgregarGrupo').addEventListener('click', () => {
-            listaGrupos.appendChild(crearBloqueGrupo());
-        });
 
         document.getElementById('btnCrear').addEventListener('click', async () => {
+            const idCurso      = selectCurso.value;
             const nombre       = document.getElementById('inputNombre').value.trim();
             const descripcion  = document.getElementById('inputDescripcion').value.trim();
             const fechaEntrega = document.getElementById('inputFechaEntrega').value;
-            const esGrupal     = checkGrupal.checked;
+            const esGrupal     = checkGrupal.checked ? 1 : 0;
             const mensajeError = document.getElementById('mensajeError');
 
             mensajeError.style.display = 'none';
+
+            if (!idCurso) {
+                mensajeError.textContent   = 'Seleccione un curso.';
+                mensajeError.style.display = 'block';
+                return;
+            }
 
             if (!nombre || !fechaEntrega) {
                 mensajeError.textContent   = 'El nombre y la fecha de entrega son obligatorios.';
@@ -414,39 +409,29 @@
                 return;
             }
 
-            const grupos = [];
-            if (esGrupal) {
-                listaGrupos.querySelectorAll('.bloque-grupo').forEach(bloque => {
-                    const nombreGrupo = bloque.querySelector('.nombre-grupo').value.trim();
-                    if (!nombreGrupo) return;
+            // el backend exige fechaEntrega posterior a la creacion, enviamos fecha y hora
+            const cuerpo = {
+                idCurso: parseInt(idCurso, 10),
+                nombre,
+                descripcion,
+                fechaEntrega: fechaEntrega + ' 23:59:00',
+                esGrupal
+            };
 
-                    const miembros = [];
-                    bloque.querySelectorAll('.lista-miembros .fila-miembro input').forEach(inp => {
-                        const carnet = inp.value.trim();
-                        if (carnet) miembros.push(carnet);
-                    });
-
-                    grupos.push({ nombre: nombreGrupo, miembros });
-                });
-
-                if (grupos.length === 0) {
-                    mensajeError.textContent   = 'Agregue al menos un grupo con nombre para tarea grupal.';
-                    mensajeError.style.display = 'block';
-                    return;
-                }
-            }
+            const url    = esEdicion ? (BASE + '/api/tareas/' + idTarea) : (BASE + '/api/tareas');
+            const metodo = esEdicion ? 'PUT' : 'POST';
 
             try {
-                const response = await fetch(BASE + '/api/tareas', {
-                    method: 'POST',
+                const response = await fetch(url, {
+                    method: metodo,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, descripcion, fechaEntrega, esGrupal, grupos })
+                    body: JSON.stringify(cuerpo)
                 });
 
                 const data = await response.json().catch(() => null);
 
                 if (!response.ok) {
-                    mensajeError.textContent   = (data && data.error) ? data.error : 'Error al crear la tarea.';
+                    mensajeError.textContent   = (data && data.error) ? data.error : 'Error al guardar la tarea.';
                     mensajeError.style.display = 'block';
                     return;
                 }
@@ -463,6 +448,8 @@
             sessionStorage.removeItem('usuario');
             window.location.href = BASE + '/login';
         });
+
+        cargarCursos();
     </script>
 </body>
 </html>

@@ -240,8 +240,8 @@
             <span id="nombreUsuario">Usuario</span>
         </div>
 
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/crearTarea'">Crear tarea</button>
+        <button class="nav-btn" id="btnCursos">Cursos</button>
+        <button class="nav-btn" id="btnCrearTarea">Crear tarea</button>
 
         <div class="sidebar-espaciador"></div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar sesion</button>
@@ -264,18 +264,29 @@
             </div>
 
             <div class="card-pie" style="gap:10px">
-                <button class="btn-atras" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Atras</button>
-                <button class="btn-atras" id="btnGrupos" style="background-color:#6B5B95">Gestionar grupos</button>
+                <button class="btn-atras" id="btnAtras">Atras</button>
             </div>
         </div>
     </main>
 
+    <script src="js/config.js"></script>
     <script>
-        const BASE = 'http://170.9.26.131:80';
+        const BASE = window.API_BASE;
 
         const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
         if (!usuario.idUsuario) window.location.href = BASE + '/login';
         if (usuario.nombre) document.getElementById('nombreUsuario').textContent = usuario.nombre;
+
+        // navegacion del sidebar y boton atras
+        document.getElementById('btnCursos').addEventListener('click', () => {
+            window.location.href = BASE + '/menuProfesor';
+        });
+        document.getElementById('btnCrearTarea').addEventListener('click', () => {
+            window.location.href = BASE + '/crearTarea';
+        });
+        document.getElementById('btnAtras').addEventListener('click', () => {
+            window.location.href = BASE + '/menuProfesor';
+        });
 
         // leer idTarea y nombre desde URL
         const params  = new URLSearchParams(window.location.search);
@@ -308,7 +319,7 @@
 
                 const meta = document.createElement('div');
                 meta.className = 'meta';
-                const fecha = e.fechaEntrega ? new Date(e.fechaEntrega).toLocaleString('es-CR') : '';
+                const fecha = e.fechaCreacion ? new Date(e.fechaCreacion).toLocaleString('es-CR') : '';
                 meta.textContent = 'Entregado: ' + fecha + (e.version ? '  |  v' + e.version : '');
 
                 info.appendChild(nombre);
@@ -322,7 +333,9 @@
                 btn.className = 'btn-revisar';
                 btn.textContent = 'Revisar';
                 btn.onclick = () => {
-                    window.location.href = BASE + '/revisarEntrega?idEntrega=' + e.idEntrega + '&estudiante=' + encodeURIComponent(e.estudiante || '');
+                    window.location.href = BASE + '/revisarEntrega?idEntrega=' + e.idEntrega +
+                        '&idTarea=' + idTarea +
+                        '&estudiante=' + encodeURIComponent(e.estudiante || '');
                 };
 
                 fila.appendChild(info);
@@ -356,10 +369,6 @@
                 document.getElementById('listaEntregas').innerHTML = '<p class="sin-entregas">Error de conexion.</p>';
             }
         }
-
-        document.getElementById('btnGrupos').addEventListener('click', () => {
-            window.location.href = BASE + '/gestionGrupos?idTarea=' + idTarea + '&nombre=' + encodeURIComponent(nombre);
-        });
 
         document.getElementById('btnCerrarSesion').addEventListener('click', () => {
             sessionStorage.removeItem('usuario');

@@ -304,8 +304,8 @@
             <span id="nombreUsuario">Usuario</span>
         </div>
 
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/menuProfesor'">Cursos</button>
-        <button class="nav-btn" onclick="window.location.href='http://170.9.26.131:80/crearTarea'">Crear tarea</button>
+        <button class="nav-btn" id="btnCursos">Cursos</button>
+        <button class="nav-btn" id="btnCrearTarea">Crear tarea</button>
 
         <div class="sidebar-espaciador"></div>
         <button class="btn-cerrar-sesion" id="btnCerrarSesion">Cerrar sesion</button>
@@ -350,14 +350,6 @@
 
         </div>
 
-        <!-- historial de versiones -->
-        <div class="card card-historial">
-            <div class="card-header"><h3>Historial de entregas</h3></div>
-            <div class="card-cuerpo" id="historialCuerpo">
-                <p class="sin-historial">Cargando historial...</p>
-            </div>
-        </div>
-
         <!-- calificacion -->
         <div class="card card-calificar">
             <div class="card-header"><h3>Calificacion</h3></div>
@@ -384,8 +376,9 @@
         </div>
     </main>
 
+    <script src="js/config.js"></script>
     <script>
-        const BASE = 'http://170.9.26.131:80';
+        const BASE = window.API_BASE;
 
         const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
         if (!usuario.idUsuario) window.location.href = BASE + '/login';
@@ -398,47 +391,20 @@
 
         document.getElementById('infoEstudiante').textContent = estudiante;
 
+        // navegacion del sidebar
+        document.getElementById('btnCursos').addEventListener('click', () => {
+            window.location.href = BASE + '/menuProfesor';
+        });
+        document.getElementById('btnCrearTarea').addEventListener('click', () => {
+            window.location.href = BASE + '/crearTarea';
+        });
+
         document.getElementById('btnAtras').onclick = () => {
             const dest = idTarea
-                ? BASE + '/verEntregas?idTarea=' + idTarea
+                ? BASE + '/entregas?idTarea=' + idTarea
                 : BASE + '/menuProfesor';
             window.location.href = dest;
         };
-
-        function renderHistorial(registros) {
-            const cuerpo = document.getElementById('historialCuerpo');
-            cuerpo.innerHTML = '';
-
-            if (!registros || registros.length === 0) {
-                cuerpo.innerHTML = '<p class="sin-historial">Sin registros en el historial.</p>';
-                return;
-            }
-
-            registros.forEach(r => {
-                const fila = document.createElement('div');
-                fila.className = 'fila-historial';
-
-                const badge = document.createElement('span');
-                badge.className   = 'badge-version';
-                badge.textContent = 'v' + r.version;
-
-                const fecha = document.createElement('span');
-                fecha.textContent = r.fechaHora
-                    ? new Date(r.fechaHora).toLocaleString('es-CR')
-                    : '';
-
-                const firma = document.createElement('span');
-                firma.style.color     = '#575757';
-                firma.style.fontSize  = '0.72rem';
-                firma.style.fontFamily = 'monospace';
-                firma.textContent     = r.firmaArchivo ? 'Firma: ' + r.firmaArchivo.slice(0, 16) + '...' : '';
-
-                fila.appendChild(badge);
-                fila.appendChild(fecha);
-                fila.appendChild(firma);
-                cuerpo.appendChild(fila);
-            });
-        }
 
         async function cargarEntrega() {
             if (!idEntrega) {
@@ -447,44 +413,29 @@
             }
 
             try {
-                const [resEntrega, resFirma, resBitacora] = await Promise.all([
-                    fetch(BASE + '/api/entregas/' + idEntrega),
-                    fetch(BASE + '/api/entregas/' + idEntrega + '/firma'),
-                    fetch(BASE + '/api/bitacora?idEntrega=' + idEntrega),
-                ]);
+                const response = await fetch(BASE + '/api/entregas/' + idEntrega);
+                const data = await response.json().catch(() => null);
 
-                // datos de la entrega
-                if (resEntrega.ok) {
-                    const e = await resEntrega.json();
-                    document.getElementById('infoArchivo').textContent  = e.archivo || '';
-                    document.getElementById('infoFecha').textContent    = e.fechaHora
-                        ? new Date(e.fechaHora).toLocaleString('es-CR') : '';
-                    document.getElementById('infoVersion').textContent  = e.version ? 'v' + e.version : '';
-                    document.getElementById('visorCodigo').textContent  = e.contenido || '';
-                    if (e.nota !== null && e.nota !== undefined) {
-                        document.getElementById('inputNota').value = e.nota;
-                    }
-                    if (e.comentarioProfesor) {
-                        document.getElementById('inputComentario').value = e.comentarioProfesor;
-                    }
-                } else {
+                if (!response.ok || !data || !data.entrega) {
                     document.getElementById('visorCodigo').textContent = 'Error al cargar el codigo.';
+                    document.getElementById('firmaTexto').textContent  = 'No disponible';
+                    return;
                 }
 
-                // firma
-                if (resFirma.ok) {
-                    const f = await resFirma.json();
-                    document.getElementById('firmaTexto').textContent = f.firma || 'Sin firma';
-                } else {
-                    document.getElementById('firmaTexto').textContent = 'No disponible';
-                }
+                const e = data.entrega;
+                if (e.estudiante) document.getElementById('infoEstudiante').textContent = e.estudiante;
+                document.getElementById('infoArchivo').textContent = e.archivo || '';
+                document.getElementById('infoFecha').textContent   = e.fechaCreacion
+                    ? new Date(e.fechaCreacion).toLocaleString('es-CR') : '';
+                document.getElementById('infoVersion').textContent = e.version ? 'v' + e.version : '';
+                document.getElementById('visorCodigo').textContent = e.contenido || '';
+                document.getElementById('firmaTexto').textContent  = e.firma || 'Sin firma';
 
-                // historial
-                if (resBitacora.ok) {
-                    const b = await resBitacora.json();
-                    renderHistorial(b.registros || b || []);
-                } else {
-                    renderHistorial([]);
+                if (e.nota !== null && e.nota !== undefined) {
+                    document.getElementById('inputNota').value = e.nota;
+                }
+                if (e.comentarioProfesor) {
+                    document.getElementById('inputComentario').value = e.comentarioProfesor;
                 }
 
             } catch (error) {
@@ -509,7 +460,7 @@
 
             try {
                 const response = await fetch(BASE + '/api/entregas/' + idEntrega, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nota: parseFloat(nota), comentarioProfesor: comentario })
                 });
