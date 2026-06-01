@@ -111,6 +111,19 @@ CREATE TABLE IF NOT EXISTS EstudianteXGrupoTrabajo (
     CONSTRAINT uq_estudiante_grupo UNIQUE (idUsuario, idGrupoTrabajo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Para el avance 4
+-- TODO: crear tabla Bitacora para registrar historial de operaciones sobre archivos
+-- Se conecta con ArchivoLogDecorator.php → registrarBitacora()
+-- CREATE TABLE IF NOT EXISTS Bitacora (
+--     idBitacora      INT          NOT NULL AUTO_INCREMENT,
+--     idUsuario       INT          NOT NULL,
+--     nombreArchivo   VARCHAR(255) NOT NULL,
+--     accion          ENUM('CREAR','MODIFICAR') NOT NULL,
+--     fecha           DATETIME     NOT NULL DEFAULT NOW(),
+--     PRIMARY KEY (idBitacora),
+--     CONSTRAINT fk_bitacora_usuario FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT IGNORE INTO Usuario (correo, nombreUsuario, nombre, contrasena, rol) VALUES
 ('javi0409@estudiantec.cr', 'javi0409', 'Javier Lee Liang', '$2y$10$Sgy8b8YX.pIavn3CzNcqi.v4C/ZbVV7e0zXl1Q5QBA0G5EtsvswOC', 'ESTUDIANTE');
 INSERT IGNORE INTO Usuario (correo, nombreUsuario, nombre, contrasena, rol) VALUES

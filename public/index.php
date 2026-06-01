@@ -183,9 +183,17 @@ $router->add('PUT', '/api/entregas/{idEntrega}', function (int $idEntrega) {
     $controller->calificar((int) $idEntrega);
 });
 
-$router->add('GET', '/api/bitacora', function () {});
+$router->add('GET', '/api/bitacora', function () {
+    // TODO: conectar con BitacoraController cuando se implemente
+    // El profesor podrá ver desde el web el historial de operaciones sobre archivos
+    // BitacoraController::listar() → consulta tabla Bitacora filtrada por idUsuario o idArchivo
+});
 
-$router->add('GET', '/api/bitacora/ultima-version', function () {});
+$router->add('GET', '/api/bitacora/ultima-version', function () {
+    // TODO: devolver la última entrada de Bitacora para un archivo dado
+    // Útil para el cliente desktop para saber si hay una versión más nueva en el servidor
+    // Query: SELECT * FROM Bitacora WHERE nombreArchivo = ? ORDER BY fecha DESC LIMIT 1
+});
 
 // API para la Base de Datos
 $router->add('GET', '/data/usuarios/{id}', function (int $id) {});

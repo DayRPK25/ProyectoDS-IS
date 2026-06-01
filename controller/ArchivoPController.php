@@ -1,14 +1,27 @@
 <?php
 
 require_once __DIR__ . '/../model/ArchivoPModel.php';
+require_once __DIR__ . '/../model/IArchivoRepositorio.php';
+require_once __DIR__ . '/../model/ArchivoDecorator.php';
+require_once __DIR__ . '/../model/ArchivoLogDecorator.php';
+require_once __DIR__ . '/../model/ArchivoFirmaDecorator.php';
+
 
 class ArchivoPController
 {
-    private ArchivoPModel $archivoPModel;
+    private IArchivoRepositorio $archivoPModel;
 
     public function __construct()
     {
-        $this->archivoPModel = new ArchivoPModel();
+        // Cadena de los decoradores: 
+        // ArchivoLogDecorator   → registra en bitácora (conectar BitacoraModel en el futuro)
+        // ArchivoFirmaDecorator → valida que SHA-256 del contenido coincida con la firma
+        // ArchivoPModel         → persiste en base de datos
+        $this->archivoPModel = new ArchivoLogDecorator(
+            new ArchivoFirmaDecorator(
+                new ArchivoPModel()
+            )
+        );
     }
 
     public function guardarArchivo(): void

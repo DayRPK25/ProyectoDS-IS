@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/Core/Database.php';
 // se tuvo que agregar en la tabla ArchivoP el idUsuario porque vi que faltaba
-class ArchivoPModel
+class ArchivoPModel implements IArchivoRepositorio
 {
     private PDO $pdo;
 
