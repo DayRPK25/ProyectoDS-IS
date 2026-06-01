@@ -46,10 +46,4 @@ class UsuarioModel
         $stmt->execute([$idUsuario]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
-    public function verificarEstudiante(string $idUsuario): ?array
-    {
-        $stmt = $this->pdo->prepare("SELECT codigoEstudiante FROM Estudiante WHERE idUsuario = ?");
-        $stmt->execute([$idUsuario]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-    }
 }
