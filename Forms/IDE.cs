@@ -298,6 +298,10 @@ namespace ProyectoDS_IS
                             return;
                         }
                     }
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 richTextBox1.Clear();

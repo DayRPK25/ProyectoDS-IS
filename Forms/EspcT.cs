@@ -33,7 +33,7 @@ namespace ProyectoDS_IS.Forms
         public EspcT(string titulo, string nomCurso, string fechaC, string fechaE, string instrucciones, int idTarea)
         {
             InitializeComponent();
-            label1.Text = ApiFake.Instance.CurrentUser;
+            label1.Text = ApiService.Instance.CurrentUser;
             label2.Text = titulo;
             label4.Text = nomCurso;
             label9.Text = fechaC;

@@ -33,7 +33,6 @@
             textBox5 = new TextBox();
             label10 = new Label();
             label9 = new Label();
-            label7 = new Label();
             label6 = new Label();
             button2 = new Button();
             button1 = new Button();
@@ -67,7 +66,6 @@
             panel2.Controls.Add(textBox5);
             panel2.Controls.Add(label10);
             panel2.Controls.Add(label9);
-            panel2.Controls.Add(label7);
             panel2.Controls.Add(label6);
             panel2.Controls.Add(button2);
             panel2.Controls.Add(button1);
@@ -111,16 +109,6 @@
             label9.Size = new Size(177, 13);
             label9.TabIndex = 13;
             label9.Text = "Debe ser de almenos 8 caracteres";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(46, 270);
-            label7.Name = "label7";
-            label7.Size = new Size(199, 13);
-            label7.TabIndex = 11;
-            label7.Text = "Debe tener extensión @estudiantec.cr";
             // 
             // label6
             // 
@@ -263,7 +251,6 @@
         private Button button2;
         private Label label6;
         private Label label9;
-        private Label label7;
         private Label label10;
         private TextBox textBox5;
     }

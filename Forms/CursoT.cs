@@ -94,7 +94,7 @@ namespace ProyectoDS_IS.Forms
             InitializeComponent();
             CargarTareas(idCurso, nameCurso);
             label2.Text = nameCurso;
-            label1.Text = ApiFake.Instance.CurrentUser;
+            label1.Text = ApiService.Instance.CurrentUser;
         }
 
         private void button1_Click(object sender, EventArgs e)

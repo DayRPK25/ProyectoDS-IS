@@ -41,7 +41,7 @@ namespace ProyectoDS_IS.Forms
 
             //Correo:
 
-            string pattern = @"^[a-zA-Z._%+-]+@estudiantec\.cr$";
+            string pattern = @"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$";
             if (!Regex.IsMatch(textBox2.Text, pattern, RegexOptions.IgnoreCase))
             {
                 MessageBox.Show("El correo debe tener extensión @estudiantec.cr", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);

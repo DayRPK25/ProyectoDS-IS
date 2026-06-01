@@ -51,7 +51,7 @@ namespace ProyectoDS_IS.Services
                     "api/auth/login",
                     content
                     );
-            response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -75,7 +75,7 @@ namespace ProyectoDS_IS.Services
                     content
                     );
 
-            response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -96,7 +96,7 @@ namespace ProyectoDS_IS.Services
                     "api/cursos"
                     );
 
-            response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -114,7 +114,7 @@ namespace ProyectoDS_IS.Services
             HttpResponseMessage response =
                 await client.GetAsync($"api/tareas?idCurso={idCurso}");
 
-            response.EnsureSuccessStatusCode();
+
             return await response.Content.ReadAsStringAsync();
         }
 

@@ -41,10 +41,10 @@ namespace ProyectoDS_IS.Forms
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            string pattern = @"^[a-zA-Z._%+-]+@estudiantec\.cr$";
+            string pattern = @"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$";
             if (!Regex.IsMatch(textBox1.Text, pattern, RegexOptions.IgnoreCase))
             {
-                MessageBox.Show("El correo debe tener extensión @estudiantec.cr", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Se debe ingresar un correo válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
