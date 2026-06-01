@@ -5,7 +5,6 @@ require_once __DIR__ . '/../model/UsuarioModel.php';
 class GrupoController
 {
     private GrupoModel $grupoModel;
-    private UsuarioModel $usuarioModel;
 
     public function __construct()
     {
@@ -122,7 +121,7 @@ class GrupoController
     }
 
     // PUT /api/tareas/{idTarea}/grupos/{idGrupo}
-    public function actualizar(int $idTarea, int $idGrupo): void
+    public function actualizar(int $idGrupo): void
     {
         $this->sesion();
         $data = json_decode(file_get_contents('php://input'), true);
@@ -145,7 +144,7 @@ class GrupoController
     }
 
     // DELETE /api/tareas/{idTarea}/grupos/{idGrupo}
-    public function eliminar(int $idTarea, int $idGrupo): void
+    public function eliminar(int $idGrupo): void
     {
         $this->sesion();
         try {
