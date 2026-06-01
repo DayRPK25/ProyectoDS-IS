@@ -9,7 +9,7 @@ require_once __DIR__ . '/../model/ArchivoFirmaDecorator.php';
 
 class ArchivoPController
 {
-    private IArchivoRepositorio $archivoPModel;
+    private ArchivoPModel $archivoPModel;
 
     public function __construct()
     {
@@ -17,11 +17,13 @@ class ArchivoPController
         // ArchivoLogDecorator   → registra en bitácora (conectar BitacoraModel en el futuro)
         // ArchivoFirmaDecorator → valida que SHA-256 del contenido coincida con la firma
         // ArchivoPModel         → persiste en base de datos
-        $this->archivoPModel = new ArchivoLogDecorator(
-            new ArchivoFirmaDecorator(
-                new ArchivoPModel()
-            )
-        );
+        //$this->archivoPModel = new ArchivoLogDecorator(
+        //    new ArchivoFirmaDecorator(
+        //        new ArchivoPModel()
+        //    )
+        //);
+
+        $this->archivoPModel = new ArchivoPModel();
     }
 
     public function guardarArchivo(): void
